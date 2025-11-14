@@ -19,7 +19,8 @@
     "lucide-react": "^0.292.0",
     "@supabase/supabase-js": "^2.38.0",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
-    "@supabase/auth-helpers-react": "^0.4.2"
+    "@supabase/auth-helpers-react": "^0.4.2",
+    "openai": "^4.20.1"
   },
   "devDependencies": {
     "@types/node": "20.8.0",

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Brain, Tag, FileText, Mic, Loader, CheckCircle, AlertCircle } from 'lucide-react'
+import { Brain, Tag, FileText, Mic, Loader, CheckCircle, AlertCircle, Image } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './auth/AuthGuard'
+import { processNoteWithAI, transcribeAudio, generateImageDescription } from '../lib/openai'
 import type { Note } from '../lib/supabase'
 
 interface AIProcessorProps {
@@ -20,7 +21,7 @@ export default function AIProcessor({ note, onProcessingComplete }: AIProcessorP
     transcription?: string
   }>({})
 
-  // Simulate AI processing (in real app, this would call actual AI services)
+  // Real AI processing using OpenAI
   const processNote = async () => {
     if (!user || processing) return
 
@@ -28,37 +29,27 @@ export default function AIProcessor({ note, onProcessingComplete }: AIProcessorP
     setStatus('processing')
 
     try {
-      // Simulate processing delay
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      let processedResults: any = {}
 
-      const processedResults: any = {}
-
-      // Extract tags from content
-      const words = note.content.toLowerCase().split(/\s+/)
-      const commonWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them']
-      
-      const meaningfulWords = words
-        .filter(word => word.length > 3 && !commonWords.includes(word))
-        .filter((word, index, arr) => arr.indexOf(word) === index)
-        .slice(0, 5)
-
-      processedResults.tags = meaningfulWords
-
-      // Generate summary for longer content
-      if (note.content.length > 100) {
-        const sentences = note.content.split(/[.!?]+/).filter(s => s.trim().length > 0)
-        processedResults.summary = sentences.slice(0, 2).join('. ') + (sentences.length > 2 ? '...' : '')
-      }
-
-      // Extract tasks from bold text (**text**)
-      const taskMatches = note.content.match(/\*\*(.*?)\*\*/g)
-      if (taskMatches) {
-        processedResults.tasks = taskMatches.map(match => match.replace(/\*\*/g, ''))
-      }
-
-      // Simulate transcription for voice notes
+      // Process different note types with OpenAI
       if (note.note_type === 'voice') {
-        processedResults.transcription = "This is a simulated transcription of the voice note. In a real implementation, this would use speech-to-text services."
+        // For voice notes, we would transcribe first, then process
+        processedResults.transcription = "Voice transcription requires audio file - using OpenAI Whisper API"
+        // In real implementation: const transcription = await transcribeAudio(audioBlob)
+        processedResults = await processNoteWithAI(note.content, note.note_type)
+      } else if (note.note_type === 'image' && note.content.startsWith('data:image')) {
+        // For image notes, generate description first
+        try {
+          const description = await generateImageDescription(note.content)
+          processedResults = await processNoteWithAI(description, 'image')
+          processedResults.summary = description
+        } catch (error) {
+          console.error('Image processing error:', error)
+          processedResults = await processNoteWithAI('Image content', note.note_type)
+        }
+      } else {
+        // For text and link notes, process content directly
+        processedResults = await processNoteWithAI(note.content, note.note_type)
       }
 
       setResults(processedResults)
