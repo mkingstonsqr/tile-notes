@@ -6,8 +6,7 @@ import {
   MicrophoneIcon, 
   PhotoIcon, 
   LinkIcon, 
-  XMarkIcon,
-  CloudArrowUpIcon
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import type { Note } from '../lib/supabase';
 
@@ -374,7 +373,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                       onClick={() => fileInputRef.current?.click()}
                       className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                      <CloudArrowUpIcon className="h-4 w-4" />
+                      <PhotoIcon className="h-4 w-4" />
                       <span>Choose Image</span>
                     </motion.button>
                     {noteContent && (
