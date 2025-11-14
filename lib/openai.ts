@@ -166,5 +166,5 @@ function extractBasicTasks(content: string): string[] {
     }
   })
 
-  return [...new Set(tasks)].slice(0, 5) // Remove duplicates and limit
+  return Array.from(new Set(tasks)).slice(0, 5) // Remove duplicates and limit
 }
