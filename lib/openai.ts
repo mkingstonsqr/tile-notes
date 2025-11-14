@@ -1,10 +1,17 @@
 import OpenAI from 'openai'
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Only for client-side usage
-})
+// Initialize OpenAI client conditionally
+const getOpenAIClient = () => {
+  const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY
+  if (!apiKey) {
+    return null
+  }
+  
+  return new OpenAI({
+    apiKey,
+    dangerouslyAllowBrowser: true // Only for client-side usage
+  })
+}
 
 export interface AIProcessingResult {
   tags: string[]
@@ -15,6 +22,18 @@ export interface AIProcessingResult {
 }
 
 export async function processNoteWithAI(content: string, noteType: string): Promise<AIProcessingResult> {
+  const openai = getOpenAIClient()
+  
+  if (!openai) {
+    console.log('OpenAI API key not found, using fallback processing')
+    return {
+      tags: extractBasicTags(content),
+      summary: content.length > 100 ? content.substring(0, 100) + '...' : undefined,
+      tasks: extractBasicTasks(content),
+      sentiment: 'neutral'
+    }
+  }
+
   try {
     const prompt = `
 Analyze the following ${noteType} note content and provide:
@@ -102,6 +121,12 @@ export async function transcribeAudio(audioBlob: Blob): Promise<string> {
 }
 
 export async function generateImageDescription(imageUrl: string): Promise<string> {
+  const openai = getOpenAIClient()
+  
+  if (!openai) {
+    return 'Image description unavailable - OpenAI API key not configured'
+  }
+
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4-vision-preview",
