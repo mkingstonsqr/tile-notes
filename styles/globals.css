@@ -48,6 +48,19 @@
   transition: all 0.2s ease;
 }
 
+/* Hover scale effect */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
+/* Glassmorphism background */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
 /* Focus styles */
 .focus-visible:focus {
   outline: 2px solid #3b82f6;

@@ -68,10 +68,14 @@ export default function NoteTile({ note, onUpdate, onDelete, isDragging }: NoteT
 
   return (
     <div
-      className={`relative bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group ${
-        isDragging ? 'shadow-2xl ring-2 ring-blue-400' : ''
+      className={`relative backdrop-blur-sm bg-white/70 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-white/20 ${
+        isDragging ? 'shadow-2xl ring-2 ring-blue-400/50 scale-105' : 'hover:scale-102'
       }`}
-      style={{ backgroundColor: note.color }}
+      style={{ 
+        backgroundColor: `${note.color}80`, // 50% opacity
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)'
+      }}
     >
       {/* Drag Handle */}
       <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -102,13 +106,13 @@ export default function NoteTile({ note, onUpdate, onDelete, isDragging }: NoteT
 
       {/* Color Picker */}
       {showColorPicker && (
-        <div className="absolute top-8 right-2 bg-white rounded-lg shadow-lg p-2 z-10 border">
+        <div className="absolute top-8 right-2 bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-2 z-10 border border-white/30">
           <div className="grid grid-cols-4 gap-1">
             {colorOptions.map((color) => (
               <button
                 key={color}
                 onClick={() => handleColorChange(color)}
-                className="w-6 h-6 rounded border-2 border-gray-200 hover:border-gray-400 transition-colors"
+                className="w-6 h-6 rounded-full border-2 border-white/50 hover:border-white/80 transition-all duration-200 hover:scale-110 shadow-sm"
                 style={{ backgroundColor: color }}
               />
             ))}
