@@ -1,15 +1,33 @@
-# Tile Notes
+# TileNotes — The Future of Note-Taking
 
-A modern note-taking application with a tile-based interface, built for both web and Mac platforms.
+TileNotes is designed to be the world's best note-taking app — fast, clean, and deeply intelligent.
+Inspired by Google Keep, TileNotes combines effortless note capture with rich organization, powerful search, and seamless AI assistance — all wrapped in a modern, minimal interface.
 
-## Features (Planned)
+## Core Features
 
-- 📝 **Tile-based Interface** - Organize notes in visual tiles
-- 🌐 **Web Application** - Access from any browser
-- 🖥️ **Mac Integration** - Native Mac app experience
-- 🔄 **Real-time Sync** - Powered by Supabase
-- 📱 **Responsive Design** - Works on all screen sizes
-- 🎨 **Customizable** - Personalize your workspace
+### 🚀 **Quick Note Capture**
+- Floating "+" button for instant note creation
+- Multiple input types: Text, Voice, Image, Link
+- Rich-text editor with formatting support
+- Infinite scrollable Tile Wall
+
+### 🧠 **AI-Powered Intelligence**  
+- Automatic tagging and summarization
+- Smart task extraction from bolded text
+- Voice transcription
+- Background processing (non-blocking)
+
+### ✅ **Smart Task Management**
+- Auto-extracted tasks from notes
+- Due dates and reminders
+- Daily email summaries
+- Recurring task support
+
+### 🔍 **Powerful Organization**
+- Calendar view by date
+- Advanced search (keywords, tags, content type)
+- Smart filtering and sorting
+- Archive and delete management
 
 ## Tech Stack
 
