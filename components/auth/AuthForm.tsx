@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createSupabaseClient } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { Eye, EyeOff, Mail, Lock, User, Chrome } from 'lucide-react'
 
 interface AuthFormProps {
@@ -14,8 +14,6 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-
-  const supabase = createSupabaseClient()
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault()

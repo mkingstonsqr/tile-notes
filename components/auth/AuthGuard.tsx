@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { createSupabaseClient } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
 interface AuthGuardProps {
@@ -11,7 +11,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createSupabaseClient()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -44,7 +43,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     })
 
     return () => subscription.unsubscribe()
-  }, [router, supabase.auth])
+  }, [router])
 
   if (loading) {
     return (
@@ -69,7 +68,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createSupabaseClient()
 
   useEffect(() => {
     const getUser = async () => {
@@ -85,7 +83,7 @@ export function useAuth() {
     })
 
     return () => subscription.unsubscribe()
-  }, [supabase.auth])
+  }, [])
 
   return { user, loading }
 }
