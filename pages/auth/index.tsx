@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { createSupabaseClient } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import AuthForm from '../../components/auth/AuthForm'
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const router = useRouter()
-  const supabase = createSupabaseClient()
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -27,7 +26,7 @@ export default function AuthPage() {
     })
 
     return () => subscription.unsubscribe()
-  }, [router, supabase.auth])
+  }, [router])
 
   const toggleMode = () => {
     setMode(mode === 'signin' ? 'signup' : 'signin')
