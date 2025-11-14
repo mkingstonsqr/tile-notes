@@ -27,6 +27,8 @@ export interface Note {
   ai_summary?: string
   ai_tags?: string[]
   ai_processed_at?: string
+  tags?: string[]
+  pinned?: boolean
   color: string
   position_x: number
   position_y: number
@@ -41,15 +43,12 @@ export interface Task {
   note_id?: string
   title: string
   description?: string
-  is_completed: boolean
+  completed: boolean
   due_date?: string
-  reminder_date?: string
-  is_recurring: boolean
-  recurrence_pattern?: string
-  priority: number
+  reminder_time?: string
+  priority: 'low' | 'medium' | 'high'
   created_at: string
   updated_at: string
-  completed_at?: string
 }
 
 export interface Tag {

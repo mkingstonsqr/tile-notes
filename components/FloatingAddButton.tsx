@@ -1,338 +1,460 @@
-import { useState, useRef } from 'react'
-import { Plus, FileText, Mic, Image, Link, Camera, Upload, X } from 'lucide-react'
-import type { Note } from '../lib/supabase'
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  PlusIcon,
+  DocumentTextIcon, 
+  MicrophoneIcon, 
+  PhotoIcon, 
+  LinkIcon, 
+  XMarkIcon,
+  ArrowUpTrayIcon
+} from '@heroicons/react/24/outline';
+import type { Note } from '../lib/supabase';
 
 interface FloatingAddButtonProps {
-  onCreateNote: (noteData: Partial<Note>) => Promise<Note | undefined>
+  onCreateNote: (noteData: Partial<Note>) => Promise<Note | undefined>;
 }
 
 export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isCreating, setIsCreating] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [modalType, setModalType] = useState<'text' | 'voice' | 'image' | 'link' | null>(null)
-  const [noteTitle, setNoteTitle] = useState('')
-  const [noteContent, setNoteContent] = useState('')
-  const [linkUrl, setLinkUrl] = useState('')
-  const [isRecording, setIsRecording] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState<'text' | 'voice' | 'image' | 'link' | null>(null);
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+  const [linkUrl, setLinkUrl] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
 
   const noteTypes = [
-    { type: 'text', icon: FileText, label: 'Text Note', color: '#FFFACD' },
-    { type: 'voice', icon: Mic, label: 'Voice Note', color: '#E6F3FF' },
-    { type: 'image', icon: Image, label: 'Image Note', color: '#F0FFF0' },
-    { type: 'link', icon: Link, label: 'Link Note', color: '#FFE4E1' },
-  ]
+    { 
+      type: 'text', 
+      icon: DocumentTextIcon, 
+      label: 'Text Note', 
+      color: 'from-blue-500 to-purple-600',
+      description: 'Write your thoughts'
+    },
+    { 
+      type: 'voice', 
+      icon: MicrophoneIcon, 
+      label: 'Voice Note', 
+      color: 'from-red-500 to-pink-600',
+      description: 'Record audio'
+    },
+    { 
+      type: 'image', 
+      icon: PhotoIcon, 
+      label: 'Image Note', 
+      color: 'from-green-500 to-teal-600',
+      description: 'Upload pictures'
+    },
+    { 
+      type: 'link', 
+      icon: LinkIcon, 
+      label: 'Link Note', 
+      color: 'from-orange-500 to-red-600',
+      description: 'Save web links'
+    },
+  ];
 
   const openModal = (type: 'text' | 'voice' | 'image' | 'link') => {
-    setModalType(type)
-    setShowModal(true)
-    setIsOpen(false)
-    setNoteTitle('')
-    setNoteContent('')
-    setLinkUrl('')
-    setRecordedBlob(null)
-  }
+    setModalType(type);
+    setShowModal(true);
+    setIsOpen(false);
+    setNoteTitle('');
+    setNoteContent('');
+    setLinkUrl('');
+    setRecordedBlob(null);
+  };
 
   const closeModal = () => {
-    setShowModal(false)
-    setModalType(null)
-    setNoteTitle('')
-    setNoteContent('')
-    setLinkUrl('')
-    setRecordedBlob(null)
+    setShowModal(false);
+    setModalType(null);
+    setNoteTitle('');
+    setNoteContent('');
+    setLinkUrl('');
+    setRecordedBlob(null);
     if (isRecording) {
-      stopRecording()
+      stopRecording();
     }
-  }
+  };
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
       
-      const chunks: BlobPart[] = []
+      const chunks: BlobPart[] = [];
       mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data)
-      }
+        chunks.push(event.data);
+      };
       
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' })
-        setRecordedBlob(blob)
-        stream.getTracks().forEach(track => track.stop())
-      }
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        setRecordedBlob(blob);
+        setNoteContent('Voice recording captured');
+        stream.getTracks().forEach(track => track.stop());
+      };
       
-      mediaRecorder.start()
-      setIsRecording(true)
+      mediaRecorder.start();
+      setIsRecording(true);
     } catch (error) {
-      console.error('Error starting recording:', error)
-      alert('Could not access microphone. Please check permissions.')
+      console.error('Error starting recording:', error);
+      alert('Could not access microphone. Please check permissions.');
     }
-  }
+  };
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
     }
-  }
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        setNoteContent(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
+        setNoteContent(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const fetchLinkPreview = async (url: string) => {
     try {
-      // Simple URL validation
-      new URL(url)
-      setNoteContent(`Link: ${url}`)
+      new URL(url);
+      setNoteContent(`Link: ${url}`);
       if (!noteTitle) {
-        setNoteTitle(`Link to ${new URL(url).hostname}`)
+        setNoteTitle(`Link to ${new URL(url).hostname}`);
       }
     } catch (error) {
-      alert('Please enter a valid URL')
+      alert('Please enter a valid URL');
     }
-  }
+  };
 
   const handleCreateNote = async () => {
-    if (!modalType) return
+    if (!modalType) return;
 
-    setIsCreating(true)
+    setIsCreating(true);
     try {
       const noteData: Partial<Note> = {
         title: noteTitle || `New ${modalType} note`,
         content: noteContent || `New ${modalType} note content`,
         note_type: modalType,
-        color: noteTypes.find(t => t.type === modalType)?.color || '#FFFACD',
-      }
+        tags: [],
+        pinned: false,
+      };
 
       if (modalType === 'link' && linkUrl) {
-        noteData.content = `${noteContent}\n\nURL: ${linkUrl}`
+        noteData.content = `${noteContent}\n\nURL: ${linkUrl}`;
       }
 
-      await onCreateNote(noteData)
-      closeModal()
+      await onCreateNote(noteData);
+      closeModal();
     } catch (error) {
-      console.error('Error creating note:', error)
+      console.error('Error creating note:', error);
     } finally {
-      setIsCreating(false)
+      setIsCreating(false);
     }
-  }
+  };
 
   return (
     <>
-      <div className="fixed bottom-8 right-8 z-50">
+      {/* Floating Action Button */}
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        className="fixed bottom-8 right-8 z-50"
+      >
         {/* Note Type Options */}
-        {isOpen && (
-          <div className="absolute bottom-16 right-0 space-y-3 animate-in slide-in-from-bottom-2 duration-200">
-            {noteTypes.map(({ type, icon: Icon, label, color }) => (
-              <button
-                key={type}
-                onClick={() => openModal(type as any)}
-                className="flex items-center space-x-3 bg-white/80 backdrop-blur-md border border-white/30 px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 group"
-                style={{ backgroundColor: `${color}80` }}
-              >
-                <Icon size={20} className="text-gray-700 group-hover:text-black transition-colors" />
-                <span className="text-gray-700 group-hover:text-black font-medium whitespace-nowrap">
-                  {label}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="absolute bottom-20 right-0 space-y-3"
+            >
+              {noteTypes.map(({ type, icon: Icon, label, color, description }, index) => (
+                <motion.button
+                  key={type}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => openModal(type as any)}
+                  className={`
+                    flex items-center space-x-3 glass-card px-4 py-3 rounded-xl 
+                    hover:shadow-xl transition-all duration-200 hover:scale-105 group
+                    bg-gradient-to-r ${color} text-white
+                  `}
+                  whileHover={{ x: -5 }}
+                >
+                  <Icon className="h-5 w-5" />
+                  <div className="text-left">
+                    <div className="font-medium whitespace-nowrap">{label}</div>
+                    <div className="text-xs opacity-90">{description}</div>
+                  </div>
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Main FAB */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => setIsOpen(!isOpen)}
           disabled={isCreating}
-          className={`w-14 h-14 bg-black text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group ${
-            isCreating ? 'animate-pulse' : 'hover:scale-110'
-          } ${isOpen ? 'rotate-45' : ''}`}
+          className={`
+            w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full 
+            shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center
+            ${isCreating ? 'animate-pulse' : ''}
+          `}
         >
-          <Plus size={24} className="transition-transform duration-300" />
-        </button>
+          <motion.div
+            animate={{ rotate: isOpen ? 45 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <PlusIcon className="h-8 w-8" />
+          </motion.div>
+        </motion.button>
 
         {/* Backdrop */}
-        {isOpen && (
-          <div
-            className="fixed inset-0 -z-10"
-            onClick={() => setIsOpen(false)}
-          />
-        )}
-      </div>
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 -z-10"
+              onClick={() => setIsOpen(false)}
+            />
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       {/* Creation Modal */}
-      {showModal && modalType && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-black">
-                Create {noteTypes.find(t => t.type === modalType)?.label}
-              </h2>
-              <button
-                onClick={closeModal}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 space-y-4">
-              {/* Title Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={noteTitle}
-                  onChange={(e) => setNoteTitle(e.target.value)}
-                  placeholder="Enter note title..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                />
+      <AnimatePresence>
+        {showModal && modalType && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={closeModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-card rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-white border-opacity-20">
+                <div className="flex items-center space-x-3">
+                  {(() => {
+                    const noteType = noteTypes.find(t => t.type === modalType);
+                    const Icon = noteType?.icon || DocumentTextIcon;
+                    return <Icon className="h-6 w-6 text-white" />;
+                  })()}
+                  <h2 className="text-xl font-bold text-white">
+                    Create {noteTypes.find(t => t.type === modalType)?.label}
+                  </h2>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={closeModal}
+                  className="p-2 text-gray-400 hover:text-white rounded-lg transition-colors"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </motion.button>
               </div>
 
-              {/* Type-specific content */}
-              {modalType === 'text' && (
+              {/* Content */}
+              <div className="p-6 space-y-4">
+                {/* Title Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Content
-                  </label>
-                  <textarea
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                    placeholder="Start writing your note..."
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none"
-                  />
-                </div>
-              )}
-
-              {modalType === 'voice' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Voice Recording
-                  </label>
-                  <div className="flex items-center space-x-3">
-                    {!isRecording ? (
-                      <button
-                        onClick={startRecording}
-                        className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                      >
-                        <Mic size={18} />
-                        <span>Start Recording</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={stopRecording}
-                        className="flex items-center space-x-2 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors animate-pulse"
-                      >
-                        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                        <span>Stop Recording</span>
-                      </button>
-                    )}
-                  </div>
-                  {recordedBlob && (
-                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-sm text-green-700">✓ Recording completed</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {modalType === 'image' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Image
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Title
                   </label>
                   <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
+                    type="text"
+                    value={noteTitle}
+                    onChange={(e) => setNoteTitle(e.target.value)}
+                    placeholder="Enter note title..."
+                    className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-300"
+                    autoFocus
                   />
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    <Upload size={18} />
-                    <span>Choose Image</span>
-                  </button>
-                  {noteContent && (
-                    <div className="mt-3">
-                      <img
-                        src={noteContent}
-                        alt="Preview"
-                        className="max-w-full h-32 object-cover rounded-lg"
-                      />
-                    </div>
-                  )}
                 </div>
-              )}
 
-              {modalType === 'link' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL
-                  </label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="url"
-                      value={linkUrl}
-                      onChange={(e) => setLinkUrl(e.target.value)}
-                      placeholder="https://example.com"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                {/* Type-specific content */}
+                {modalType === 'text' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Content
+                    </label>
+                    <textarea
+                      value={noteContent}
+                      onChange={(e) => setNoteContent(e.target.value)}
+                      placeholder="Start writing your note..."
+                      rows={6}
+                      className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-white placeholder-gray-300"
                     />
-                    <button
-                      onClick={() => fetchLinkPreview(linkUrl)}
-                      className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-                    >
-                      Preview
-                    </button>
                   </div>
-                  <textarea
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                    placeholder="Add notes about this link..."
-                    rows={3}
-                    className="w-full mt-3 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none"
-                  />
-                </div>
-              )}
-            </div>
+                )}
 
-            {/* Footer */}
-            <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateNote}
-                disabled={isCreating || (modalType === 'voice' && !recordedBlob) || (modalType === 'image' && !noteContent) || (modalType === 'link' && !linkUrl)}
-                className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isCreating ? 'Creating...' : 'Create Note'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                {modalType === 'voice' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Voice Recording
+                    </label>
+                    <div className="flex items-center space-x-3">
+                      {!isRecording ? (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={startRecording}
+                          className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                        >
+                          <MicrophoneIcon className="h-4 w-4" />
+                          <span>Start Recording</span>
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={stopRecording}
+                          className="flex items-center space-x-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                        >
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ repeat: Infinity, duration: 1 }}
+                            className="w-3 h-3 bg-red-500 rounded-full"
+                          />
+                          <span>Stop Recording</span>
+                        </motion.button>
+                      )}
+                    </div>
+                    {recordedBlob && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-3 p-3 bg-green-500 bg-opacity-20 border border-green-400 rounded-lg"
+                      >
+                        <p className="text-sm text-green-300">✓ Recording completed</p>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+
+                {modalType === 'image' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Image
+                    </label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <ArrowUpTrayIcon className="h-4 w-4" />
+                      <span>Choose Image</span>
+                    </motion.button>
+                    {noteContent && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mt-3"
+                      >
+                        <img
+                          src={noteContent}
+                          alt="Preview"
+                          className="max-w-full h-32 object-cover rounded-lg border border-white border-opacity-30"
+                        />
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+
+                {modalType === 'link' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      URL
+                    </label>
+                    <div className="flex space-x-2">
+                      <input
+                        type="url"
+                        value={linkUrl}
+                        onChange={(e) => setLinkUrl(e.target.value)}
+                        placeholder="https://example.com"
+                        className="flex-1 px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-300"
+                      />
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => fetchLinkPreview(linkUrl)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Preview
+                      </motion.button>
+                    </div>
+                    <textarea
+                      value={noteContent}
+                      onChange={(e) => setNoteContent(e.target.value)}
+                      placeholder="Add notes about this link..."
+                      rows={3}
+                      className="w-full mt-3 px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-white placeholder-gray-300"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-end space-x-3 p-6 border-t border-white border-opacity-20">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={closeModal}
+                  className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleCreateNote}
+                  disabled={
+                    isCreating || 
+                    (modalType === 'voice' && !recordedBlob) || 
+                    (modalType === 'image' && !noteContent) || 
+                    (modalType === 'link' && !linkUrl)
+                  }
+                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isCreating ? 'Creating...' : 'Create Note'}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
-  )
+  );
 }

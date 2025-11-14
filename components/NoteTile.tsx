@@ -1,14 +1,28 @@
-import { useState, useRef, useEffect } from 'react'
-import { Trash2, Edit3, Palette, GripVertical, FileText, Mic, Image, Link, Calendar, Tag, Brain } from 'lucide-react'
-import { Note } from '../lib/supabase'
-import RichTextEditor from './RichTextEditor'
-import AIProcessor from './AIProcessor'
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  TrashIcon, 
+  PencilIcon, 
+  SwatchIcon, 
+  Bars3Icon,
+  DocumentTextIcon,
+  MicrophoneIcon,
+  PhotoIcon,
+  LinkIcon,
+  CalendarIcon,
+  TagIcon,
+  BookmarkIcon
+} from '@heroicons/react/24/outline';
+import { BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/24/solid';
+import { Note } from '../lib/supabase';
+import RichTextEditor from './RichTextEditor';
 
 interface NoteTileProps {
-  note: Note
-  onUpdate: (updates: Partial<Note>) => void
-  onDelete: () => void
-  isDragging: boolean
+  note: Note;
+  onUpdate: (updates: Partial<Note>) => void;
+  onDelete: () => void;
+  onEdit: () => void;
+  isDragging: boolean;
 }
 
 const colorOptions = [
@@ -20,210 +34,251 @@ const colorOptions = [
   '#F0F8FF', // Alice Blue
   '#FFF8DC', // Cornsilk
   '#E0E6FF', // Lavender
-]
+];
 
-export default function NoteTile({ note, onUpdate, onDelete, isDragging }: NoteTileProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [title, setTitle] = useState(note.title || '')
-  const [content, setContent] = useState(note.content)
+export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging }: NoteTileProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showActions, setShowActions] = useState(false);
+  const [title, setTitle] = useState(note.title || '');
+  const [content, setContent] = useState(note.content);
   
-  const titleRef = useRef<HTMLInputElement>(null)
-  const contentRef = useRef<HTMLTextAreaElement>(null)
+  const titleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isEditing && titleRef.current) {
-      titleRef.current.focus()
+      titleRef.current.focus();
     }
-  }, [isEditing])
+  }, [isEditing]);
 
   const handleSave = () => {
-    onUpdate({ title, content })
-    setIsEditing(false)
-  }
+    onUpdate({ title, content });
+    setIsEditing(false);
+  };
 
   const handleCancel = () => {
-    setTitle(note.title || '')
-    setContent(note.content)
-    setIsEditing(false)
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.metaKey) {
-      handleSave()
-    } else if (e.key === 'Escape') {
-      handleCancel()
-    }
-  }
+    setTitle(note.title || '');
+    setContent(note.content);
+    setIsEditing(false);
+  };
 
   const handleColorChange = (color: string) => {
-    onUpdate({ color })
-    setShowColorPicker(false)
-  }
+    onUpdate({ color });
+    setShowColorPicker(false);
+  };
+
+  const handlePinToggle = () => {
+    onUpdate({ pinned: !note.pinned });
+  };
+
+  const getNoteTypeIcon = () => {
+    switch (note.note_type) {
+      case 'voice':
+        return <MicrophoneIcon className="h-4 w-4 text-blue-500" />;
+      case 'image':
+        return <PhotoIcon className="h-4 w-4 text-green-500" />;
+      case 'link':
+        return <LinkIcon className="h-4 w-4 text-purple-500" />;
+      default:
+        return <DocumentTextIcon className="h-4 w-4 text-gray-500" />;
+    }
+  };
 
   return (
-    <div
-      className={`relative backdrop-blur-sm bg-white/70 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-white/20 ${
-        isDragging ? 'shadow-2xl ring-2 ring-blue-400/50 scale-105' : 'hover:scale-102'
-      }`}
+    <motion.div
+      layout
+      whileHover={{ y: -2 }}
+      className={`note-tile glass-card rounded-2xl overflow-hidden transition-all duration-300 ${
+        isDragging ? 'shadow-2xl ring-2 ring-blue-400 scale-105 rotate-2' : 'hover:shadow-xl'
+      } ${note.pinned ? 'ring-2 ring-yellow-400 ring-opacity-50' : ''}`}
       style={{ 
-        backgroundColor: `${note.color}80`, // 50% opacity
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)'
+        backgroundColor: note.color ? `${note.color}40` : 'rgba(255, 255, 255, 0.1)',
       }}
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
     >
-      {/* Drag Handle */}
-      <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <GripVertical size={16} className="text-gray-400" />
-      </div>
+      {/* Header */}
+      <div className="relative p-4 pb-2">
+        {/* Drag Handle */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: showActions ? 1 : 0 }}
+          className="absolute top-2 left-2"
+        >
+          <Bars3Icon className="h-4 w-4 text-gray-400" />
+        </motion.div>
 
-      {/* Action Buttons */}
-      <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={() => setShowColorPicker(!showColorPicker)}
-          className="p-1 text-gray-500 hover:text-gray-700 hover:bg-white/50 rounded"
-        >
-          <Palette size={14} />
-        </button>
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="p-1 text-gray-500 hover:text-gray-700 hover:bg-white/50 rounded"
-        >
-          <Edit3 size={14} />
-        </button>
-        <button
-          onClick={onDelete}
-          className="p-1 text-red-500 hover:text-red-700 hover:bg-white/50 rounded"
-        >
-          <Trash2 size={14} />
-        </button>
-      </div>
-
-      {/* Color Picker */}
-      {showColorPicker && (
-        <div className="absolute top-8 right-2 bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-2 z-10 border border-white/30">
-          <div className="grid grid-cols-4 gap-1">
-            {colorOptions.map((color) => (
-              <button
-                key={color}
-                onClick={() => handleColorChange(color)}
-                className="w-6 h-6 rounded-full border-2 border-white/50 hover:border-white/80 transition-all duration-200 hover:scale-110 shadow-sm"
-                style={{ backgroundColor: color }}
-              />
-            ))}
-          </div>
+        {/* Note Type Icon */}
+        <div className="absolute top-2 left-8">
+          {getNoteTypeIcon()}
         </div>
-      )}
 
-      {/* Note Type Icon */}
-      <div className="absolute top-2 left-8">
-        {note.note_type === 'text' && <FileText size={16} className="text-gray-500" />}
-        {note.note_type === 'voice' && <Mic size={16} className="text-blue-500" />}
-        {note.note_type === 'image' && <Image size={16} className="text-green-500" />}
-        {note.note_type === 'link' && <Link size={16} className="text-purple-500" />}
+        {/* Pin Button */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handlePinToggle}
+          className={`absolute top-2 right-12 p-1 rounded-lg transition-colors ${
+            note.pinned 
+              ? 'text-yellow-500 bg-yellow-100 bg-opacity-50' 
+              : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-100 hover:bg-opacity-30'
+          }`}
+        >
+          {note.pinned ? (
+            <BookmarkSolidIcon className="h-4 w-4" />
+          ) : (
+            <BookmarkIcon className="h-4 w-4" />
+          )}
+        </motion.button>
+
+        {/* Action Buttons */}
+        <AnimatePresence>
+          {showActions && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              className="absolute top-2 right-2 flex space-x-1"
+            >
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowColorPicker(!showColorPicker)}
+                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-white hover:bg-opacity-30 rounded-lg transition-colors"
+              >
+                <SwatchIcon className="h-4 w-4" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onEdit}
+                className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-100 hover:bg-opacity-30 rounded-lg transition-colors"
+              >
+                <PencilIcon className="h-4 w-4" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onDelete}
+                className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-100 hover:bg-opacity-30 rounded-lg transition-colors"
+              >
+                <TrashIcon className="h-4 w-4" />
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Color Picker */}
+        <AnimatePresence>
+          {showColorPicker && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+              className="absolute top-10 right-2 glass-card p-3 rounded-xl z-10 shadow-lg"
+            >
+              <div className="grid grid-cols-4 gap-2">
+                {colorOptions.map((color) => (
+                  <motion.button
+                    key={color}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleColorChange(color)}
+                    className="w-6 h-6 rounded-full border-2 border-white border-opacity-50 hover:border-opacity-100 transition-all duration-200 shadow-sm"
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Content */}
-      <div className="p-4 pt-8">
-        {isEditing ? (
-          <RichTextEditor
-            initialContent={content}
-            onSave={(newContent) => {
-              setContent(newContent)
-              onUpdate({ title, content: newContent })
-              setIsEditing(false)
-            }}
-            onCancel={handleCancel}
-            placeholder="Start writing your note..."
-          />
-        ) : (
-          <div 
-            className="cursor-pointer"
-            onClick={() => setIsEditing(true)}
-          >
-            {/* Title */}
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-lg text-gray-800 line-clamp-2 flex-1">
-                {note.title || 'Untitled Note'}
-              </h3>
-            </div>
+      <div className="px-4 pb-4">
+        <motion.div
+          layout
+          onClick={onEdit}
+          className="cursor-pointer"
+        >
+          {/* Title */}
+          <h3 className="font-semibold text-lg text-white mb-2 line-clamp-2">
+            {note.title || 'Untitled Note'}
+          </h3>
 
-            {/* Content Preview */}
-            <div className="text-gray-600 text-sm mb-3">
-              {note.note_type === 'image' && note.content.startsWith('data:image') ? (
-                <img 
-                  src={note.content} 
-                  alt="Note content" 
-                  className="w-full h-32 object-cover rounded-lg mb-2"
-                />
-              ) : note.note_type === 'voice' ? (
-                <div className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg">
-                  <Mic size={16} className="text-blue-500" />
-                  <span className="text-blue-700">Voice recording</span>
-                </div>
-              ) : note.note_type === 'link' ? (
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 text-purple-600">
-                    <Link size={14} />
-                    <span className="text-xs">Link Note</span>
-                  </div>
-                  <p className="line-clamp-4">{note.content}</p>
-                </div>
-              ) : (
-                <p className="whitespace-pre-wrap line-clamp-6">{note.content}</p>
-              )}
-            </div>
-
-            {/* Metadata */}
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-1">
-                  <Calendar size={12} />
-                  <span>{new Date(note.created_at).toLocaleDateString()}</span>
-                </div>
-                {note.ai_tags && note.ai_tags.length > 0 && (
-                  <div className="flex items-center space-x-1">
-                    <Tag size={12} />
-                    <span>{note.ai_tags.slice(0, 2).join(', ')}</span>
-                  </div>
-                )}
+          {/* Content Preview */}
+          <div className="text-gray-200 text-sm mb-3">
+            {note.note_type === 'image' && note.content.startsWith('data:image') ? (
+              <motion.img 
+                whileHover={{ scale: 1.02 }}
+                src={note.content} 
+                alt="Note content" 
+                className="w-full h-32 object-cover rounded-lg mb-2"
+              />
+            ) : note.note_type === 'voice' ? (
+              <div className="flex items-center space-x-2 p-3 bg-blue-500 bg-opacity-20 rounded-lg">
+                <MicrophoneIcon className="h-4 w-4 text-blue-400" />
+                <span className="text-blue-300">Voice recording</span>
               </div>
-              {note.ai_summary && (
-                <div className="text-blue-500 text-xs">AI</div>
-              )}
-            </div>
-
-            {/* AI Tags */}
-            {note.ai_tags && note.ai_tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {note.ai_tags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-black/10 text-gray-700 text-xs rounded-full"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-                {note.ai_tags.length > 3 && (
-                  <span className="text-xs text-gray-500">+{note.ai_tags.length - 3}</span>
-                )}
+            ) : note.note_type === 'link' ? (
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-purple-400">
+                  <LinkIcon className="h-3 w-3" />
+                  <span className="text-xs">Link Note</span>
+                </div>
+                <p className="line-clamp-4">{note.content}</p>
               </div>
+            ) : (
+              <p className="whitespace-pre-wrap line-clamp-6">{note.content}</p>
             )}
           </div>
-        )}
 
-        {/* AI Processing Component */}
-        {!isEditing && note.content.trim().length > 10 && (
-          <div className="mt-3">
-            <AIProcessor 
-              note={note} 
-              onProcessingComplete={(updatedNote) => {
-                onUpdate(updatedNote)
-              }}
-            />
+          {/* Tags */}
+          {note.tags && note.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {note.tags.slice(0, 3).map((tag, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="px-2 py-1 bg-white bg-opacity-20 text-white text-xs rounded-full font-medium"
+                >
+                  #{tag}
+                </motion.span>
+              ))}
+              {note.tags.length > 3 && (
+                <span className="text-xs text-gray-300">+{note.tags.length - 3}</span>
+              )}
+            </div>
+          )}
+
+          {/* Metadata */}
+          <div className="flex items-center justify-between text-xs text-gray-400">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-1">
+                <CalendarIcon className="h-3 w-3" />
+                <span>{new Date(note.created_at).toLocaleDateString()}</span>
+              </div>
+              {note.tags && note.tags.length > 0 && (
+                <div className="flex items-center space-x-1">
+                  <TagIcon className="h-3 w-3" />
+                  <span>{note.tags.length} tags</span>
+                </div>
+              )}
+            </div>
+            {note.ai_summary && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-blue-400 text-xs font-medium bg-blue-500 bg-opacity-20 px-2 py-1 rounded-full"
+              >
+                AI
+              </motion.div>
+            )}
           </div>
-        )}
+        </motion.div>
       </div>
-    </div>
-  )
+    </motion.div>
+  );
 }
