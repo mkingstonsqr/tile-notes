@@ -1,6 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { createClientComponentClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
 
 // Environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -8,12 +6,6 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 // Client-side Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-// Client component helper
-export const createSupabaseClient = () => createClientComponentClient()
-
-// Server component helper
-export const createSupabaseServerClient = () => createServerComponentClient({ cookies })
 
 // Database types
 export interface Profile {
