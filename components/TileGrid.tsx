@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import NoteTile from './NoteTile'
+import { Note } from '../lib/supabase'
 
-interface Note {
-  id: string
-  title: string
-  content: string
-  color: string
-  position: { x: number; y: number }
+interface TileNote extends Note {
+  position?: { x: number; y: number }
 }
 
 interface TileGridProps {
@@ -34,8 +31,14 @@ export default function TileGrid({ notes, onUpdateNote, onDeleteNote }: TileGrid
     const targetNote = notes[destinationIndex]
     
     if (draggedNote && targetNote) {
-      onUpdateNote(draggedNote.id, { position: targetNote.position })
-      onUpdateNote(targetNote.id, { position: draggedNote.position })
+      onUpdateNote(draggedNote.id, { 
+        position_x: targetNote.position_x,
+        position_y: targetNote.position_y 
+      })
+      onUpdateNote(targetNote.id, { 
+        position_x: draggedNote.position_x,
+        position_y: draggedNote.position_y 
+      })
     }
   }
 

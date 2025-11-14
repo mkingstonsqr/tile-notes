@@ -1,13 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Trash2, Edit3, Palette, GripVertical } from 'lucide-react'
-
-interface Note {
-  id: string
-  title: string
-  content: string
-  color: string
-  position: { x: number; y: number }
-}
+import { Note } from '../lib/supabase'
 
 interface NoteTileProps {
   note: Note
@@ -30,7 +23,7 @@ const colorOptions = [
 export default function NoteTile({ note, onUpdate, onDelete, isDragging }: NoteTileProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [showColorPicker, setShowColorPicker] = useState(false)
-  const [title, setTitle] = useState(note.title)
+  const [title, setTitle] = useState(note.title || '')
   const [content, setContent] = useState(note.content)
   
   const titleRef = useRef<HTMLInputElement>(null)
@@ -48,7 +41,7 @@ export default function NoteTile({ note, onUpdate, onDelete, isDragging }: NoteT
   }
 
   const handleCancel = () => {
-    setTitle(note.title)
+    setTitle(note.title || '')
     setContent(note.content)
     setIsEditing(false)
   }
