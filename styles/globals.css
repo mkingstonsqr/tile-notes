@@ -256,7 +256,7 @@ body {
 
 /* Note Tile Enhancements */
 .note-tile {
-  @apply glass-card cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group;
+  @apply glass-card cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl;
 }
 
 .note-tile-pinned {
