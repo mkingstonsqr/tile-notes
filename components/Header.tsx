@@ -1,10 +1,14 @@
-import { Plus, Settings, User } from 'lucide-react'
+import { Plus, Settings, User, LogOut } from 'lucide-react'
+import { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface HeaderProps {
-  onAddNote: () => void
+  onAddNote?: () => void
+  user?: SupabaseUser
+  onSignOut?: () => Promise<void>
+  notesCount?: number
 }
 
-export default function Header({ onAddNote }: HeaderProps) {
+export default function Header({ onAddNote, user, onSignOut, notesCount }: HeaderProps) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
@@ -19,21 +23,43 @@ export default function Header({ onAddNote }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-3">
-            <button
-              onClick={onAddNote}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus size={18} />
-              <span>New Note</span>
-            </button>
+            {onAddNote && (
+              <button
+                onClick={onAddNote}
+                className="flex items-center space-x-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <Plus size={18} />
+                <span>New Note</span>
+              </button>
+            )}
             
-            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-              <Settings size={20} />
-            </button>
+            {user && (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-600">
+                  {user.email} {notesCount !== undefined && `(${notesCount} notes)`}
+                </span>
+                
+                <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                  <Settings size={20} />
+                </button>
+                
+                {onSignOut && (
+                  <button 
+                    onClick={onSignOut}
+                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Sign Out"
+                  >
+                    <LogOut size={20} />
+                  </button>
+                )}
+              </div>
+            )}
             
-            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-              <User size={20} />
-            </button>
+            {!user && (
+              <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                <User size={20} />
+              </button>
+            )}
           </div>
         </div>
       </div>
