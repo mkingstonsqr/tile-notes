@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Squares2X2Icon, 
-  CalendarIcon, 
-  CheckSquareIcon, 
-  Cog6ToothIcon,
-  ArrowRightOnRectangleIcon,
-  UserIcon 
-} from '@heroicons/react/24/outline';
+  Grid, 
+  Calendar, 
+  CheckSquare, 
+  Settings,
+  LogOut,
+  User 
+} from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
 type View = 'notes' | 'calendar' | 'tasks' | 'settings';
@@ -30,9 +30,9 @@ export default function Header({
   onViewChange 
 }: HeaderProps) {
   const navItems = [
-    { key: 'notes' as View, label: 'Notes', icon: Squares2X2Icon },
-    { key: 'calendar' as View, label: 'Calendar', icon: CalendarIcon },
-    { key: 'tasks' as View, label: 'Tasks', icon: CheckSquareIcon },
+    { key: 'notes' as View, label: 'Notes', icon: Grid },
+    { key: 'calendar' as View, label: 'Calendar', icon: Calendar },
+    { key: 'tasks' as View, label: 'Tasks', icon: CheckSquare },
   ];
 
   return (
@@ -109,7 +109,7 @@ export default function Header({
                   `}
                   title="Settings"
                 >
-                  <Cog6ToothIcon className="h-5 w-5" />
+                  <Settings className="h-5 w-5" />
                 </motion.button>
                 
                 {onSignOut && (
@@ -120,7 +120,7 @@ export default function Header({
                     className="p-2 text-gray-300 hover:text-red-400 hover:bg-red-500 hover:bg-opacity-20 rounded-lg transition-colors"
                     title="Sign Out"
                   >
-                    <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                    <LogOut className="h-5 w-5" />
                   </motion.button>
                 )}
               </>
@@ -132,7 +132,7 @@ export default function Header({
                 whileTap={{ scale: 0.9 }}
                 className="p-2 text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
               >
-                <UserIcon className="h-5 w-5" />
+                <User className="h-5 w-5" />
               </motion.button>
             )}
           </div>
