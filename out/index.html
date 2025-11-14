@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TileNotes - The Future of Note-Taking</title>
+    <meta name="description" content="Capture, organize, and discover your thoughts with AI-powered intelligence. Beautiful, fast, and incredibly smart.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .features {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .feature p {
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .status {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            color: #bbf7d0;
+        }
+        
+        .status h3 {
+            margin-bottom: 0.5rem;
+            color: #86efac;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TileNotes</h1>
+        <p class="subtitle">The Future of Intelligent Note-Taking</p>
+        <p class="description">
+            Capture, organize, and discover your thoughts with AI-powered intelligence. 
+            Beautiful Apple-inspired design meets cutting-edge technology to revolutionize how you take notes.
+        </p>
+        
+        <div>
+            <a href="https://github.com/mkingstonsqr/tile-notes" class="btn" target="_blank">
+                View on GitHub
+            </a>
+            <a href="#features" class="btn btn-secondary">
+                Learn More
+            </a>
+        </div>
+        
+        <div class="status">
+            <h3>🚀 Deployment Status</h3>
+            <p>TileNotes is currently being deployed with the latest professional redesign and AI integration. The full Next.js application will be available shortly!</p>
+        </div>
+        
+        <div class="features" id="features">
+            <div class="feature">
+                <span class="emoji">🧠</span>
+                <h3>AI-Powered Intelligence</h3>
+                <p>Real ChatGPT integration for smart tagging, task extraction, and content summarization. Your notes become smarter automatically.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="emoji">📅</span>
+                <h3>Visual Organization</h3>
+                <p>Beautiful calendar views, tile-based layout, and intuitive drag-and-drop organization. See your thoughts in a whole new way.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="emoji">🔍</span>
+                <h3>Instant Search & Filter</h3>
+                <p>Find anything instantly with intelligent filtering, tag-based organization, and advanced search capabilities.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="emoji">✨</span>
+                <h3>Apple-Inspired Design</h3>
+                <p>Glassmorphism aesthetics, smooth animations, and professional UI that feels native on every device.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="emoji">🔐</span>
+                <h3>Secure Authentication</h3>
+                <p>Email/password and Google OAuth integration with Supabase backend for secure, real-time data sync.</p>
+            </div>
+            
+            <div class="feature">
+                <span class="emoji">⚡</span>
+                <h3>Lightning Fast</h3>
+                <p>Built with Next.js and optimized for performance. Instant note capture, real-time updates, and seamless experience.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
