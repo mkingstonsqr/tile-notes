@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createSupabaseClient } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { useAuth } from './auth/AuthGuard'
 import type { Note } from '../lib/supabase'
 import Header from './Header'
@@ -10,7 +10,6 @@ export default function TileNotesApp() {
   const { user } = useAuth()
   const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createSupabaseClient()
 
   // Load user's notes
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function TileNotesApp() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [user, supabase])
+  }, [user])
 
   const createNote = async (noteData: Partial<Note>) => {
     if (!user) return
