@@ -9,7 +9,7 @@ interface CalendarViewProps {
 
 export default function CalendarView({ notes, onNoteClick }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month')
+  const [viewMode, setViewMode] = useState<'month'>('month')
 
   const today = new Date()
   
@@ -125,18 +125,16 @@ export default function CalendarView({ notes, onNoteClick }: CalendarViewProps) 
               <Grid size={16} />
             </button>
             <button
-              onClick={() => setViewMode('week')}
-              className={`p-2 rounded transition-colors ${
-                viewMode === 'week' ? 'bg-black text-white' : 'hover:bg-gray-100'
-              }`}
+              disabled
+              className="p-2 rounded transition-colors opacity-50 cursor-not-allowed hover:bg-gray-100"
+              title="Coming Soon"
             >
               <Calendar size={16} />
             </button>
             <button
-              onClick={() => setViewMode('day')}
-              className={`p-2 rounded transition-colors ${
-                viewMode === 'day' ? 'bg-black text-white' : 'hover:bg-gray-100'
-              }`}
+              disabled
+              className="p-2 rounded transition-colors opacity-50 cursor-not-allowed hover:bg-gray-100"
+              title="Coming Soon"
             >
               <List size={16} />
             </button>
@@ -235,21 +233,6 @@ export default function CalendarView({ notes, onNoteClick }: CalendarViewProps) 
     )
   }
 
-  // Week and Day views would be implemented similarly
-  return (
-    <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-8 text-center">
-      <h3 className="text-lg font-medium text-gray-600 mb-2">
-        {viewMode === 'week' ? 'Week View' : 'Day View'}
-      </h3>
-      <p className="text-gray-500">
-        Coming soon! Switch back to month view for now.
-      </p>
-      <button
-        onClick={() => setViewMode('month')}
-        className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
-      >
-        Back to Month View
-      </button>
-    </div>
-  )
+  // This should never be reached since we only have 'month' view now
+  return null
 }
