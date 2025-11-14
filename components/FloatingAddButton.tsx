@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  PlusIcon,
-  DocumentTextIcon, 
-  MicrophoneIcon, 
-  PhotoIcon, 
-  LinkIcon, 
-  XMarkIcon
-} from '@heroicons/react/24/outline';
+  Plus,
+  FileText, 
+  Mic, 
+  Image, 
+  Link, 
+  X,
+  Upload
+} from 'lucide-react';
 import type { Note } from '../lib/supabase';
 
 interface FloatingAddButtonProps {
@@ -30,28 +31,28 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
   const noteTypes = [
     { 
       type: 'text', 
-      icon: DocumentTextIcon, 
+      icon: FileText, 
       label: 'Text Note', 
       color: 'from-blue-500 to-purple-600',
       description: 'Write your thoughts'
     },
     { 
       type: 'voice', 
-      icon: MicrophoneIcon, 
+      icon: Mic, 
       label: 'Voice Note', 
       color: 'from-red-500 to-pink-600',
       description: 'Record audio'
     },
     { 
       type: 'image', 
-      icon: PhotoIcon, 
+      icon: Image, 
       label: 'Image Note', 
       color: 'from-green-500 to-teal-600',
       description: 'Upload pictures'
     },
     { 
       type: 'link', 
-      icon: LinkIcon, 
+      icon: Link, 
       label: 'Link Note', 
       color: 'from-orange-500 to-red-600',
       description: 'Save web links'
@@ -221,7 +222,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
             animate={{ rotate: isOpen ? 45 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <PlusIcon className="h-8 w-8" />
+            <Plus className="h-8 w-8" />
           </motion.div>
         </motion.button>
 
@@ -261,7 +262,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                 <div className="flex items-center space-x-3">
                   {(() => {
                     const noteType = noteTypes.find(t => t.type === modalType);
-                    const Icon = noteType?.icon || DocumentTextIcon;
+                    const Icon = noteType?.icon || FileText;
                     return <Icon className="h-6 w-6 text-white" />;
                   })()}
                   <h2 className="text-xl font-bold text-white">
@@ -274,7 +275,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                   onClick={closeModal}
                   className="p-2 text-gray-400 hover:text-white rounded-lg transition-colors"
                 >
-                  <XMarkIcon className="h-5 w-5" />
+                  <X className="h-5 w-5" />
                 </motion.button>
               </div>
 
@@ -324,7 +325,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                           onClick={startRecording}
                           className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                         >
-                          <MicrophoneIcon className="h-4 w-4" />
+                          <Mic className="h-4 w-4" />
                           <span>Start Recording</span>
                         </motion.button>
                       ) : (
@@ -373,7 +374,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                       onClick={() => fileInputRef.current?.click()}
                       className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                      <PhotoIcon className="h-4 w-4" />
+                      <Upload className="h-4 w-4" />
                       <span>Choose Image</span>
                     </motion.button>
                     {noteContent && (
