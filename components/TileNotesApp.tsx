@@ -5,11 +5,20 @@ import type { Note } from '../lib/supabase'
 import Header from './Header'
 import TileGrid from './TileGrid'
 import FloatingAddButton from './FloatingAddButton'
+import SearchBar from './SearchBar'
+import CalendarView from './CalendarView'
+import TaskManager from './TaskManager'
+import SettingsPanel from './SettingsPanel'
+import { Grid, Calendar, CheckSquare, Settings } from 'lucide-react'
 
 export default function TileNotesApp() {
   const { user } = useAuth()
   const [notes, setNotes] = useState<Note[]>([])
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentView, setCurrentView] = useState<'grid' | 'calendar' | 'tasks'>('grid')
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null)
+  const [showSettings, setShowSettings] = useState(false)
 
   // Load user's notes
   useEffect(() => {
@@ -149,6 +158,7 @@ export default function TileNotesApp() {
       <Header 
         user={user}
         onSignOut={handleSignOut}
+        onOpenSettings={() => setShowSettings(true)}
         notesCount={notes.length}
       />
       
@@ -169,21 +179,92 @@ export default function TileNotesApp() {
                 content: 'Start writing your thoughts here...',
                 note_type: 'text'
               })}
-              className="bg-black text-white px-8 py-3 font-bold hover:bg-gray-800 transition-colors"
+              className="bg-black text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors"
             >
               Create Your First Note
             </button>
           </div>
         ) : (
-          <TileGrid 
-            notes={notes}
-            onUpdateNote={updateNote}
-            onDeleteNote={deleteNote}
-          />
+          <div className="space-y-6">
+            {/* View Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setCurrentView('grid')}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                      currentView === 'grid' 
+                        ? 'bg-black text-white' 
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    <Grid size={16} />
+                    <span>Grid</span>
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('calendar')}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                      currentView === 'calendar' 
+                        ? 'bg-black text-white' 
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    <Calendar size={16} />
+                    <span>Calendar</span>
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('tasks')}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                      currentView === 'tasks' 
+                        ? 'bg-black text-white' 
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                  >
+                    <CheckSquare size={16} />
+                    <span>Tasks</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Search Bar (only for grid view) */}
+            {currentView === 'grid' && (
+              <SearchBar 
+                notes={notes}
+                onFilteredNotes={setFilteredNotes}
+              />
+            )}
+
+            {/* Content based on current view */}
+            {currentView === 'grid' && (
+              <TileGrid 
+                notes={filteredNotes.length > 0 ? filteredNotes : notes}
+                onUpdateNote={updateNote}
+                onDeleteNote={deleteNote}
+              />
+            )}
+
+            {currentView === 'calendar' && (
+              <CalendarView 
+                notes={notes}
+                onNoteClick={setSelectedNote}
+              />
+            )}
+
+            {currentView === 'tasks' && (
+              <TaskManager />
+            )}
+          </div>
         )}
       </main>
 
       <FloatingAddButton onCreateNote={createNote} />
+      
+      {/* Settings Panel */}
+      <SettingsPanel 
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   )
 }

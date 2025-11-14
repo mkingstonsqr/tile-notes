@@ -5,10 +5,11 @@ interface HeaderProps {
   onAddNote?: () => void
   user?: SupabaseUser
   onSignOut?: () => Promise<void>
+  onOpenSettings?: () => void
   notesCount?: number
 }
 
-export default function Header({ onAddNote, user, onSignOut, notesCount }: HeaderProps) {
+export default function Header({ onAddNote, user, onSignOut, onOpenSettings, notesCount }: HeaderProps) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
@@ -39,7 +40,11 @@ export default function Header({ onAddNote, user, onSignOut, notesCount }: Heade
                   {user.email} {notesCount !== undefined && `(${notesCount} notes)`}
                 </span>
                 
-                <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                <button 
+                  onClick={onOpenSettings}
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Settings"
+                >
                   <Settings size={20} />
                 </button>
                 

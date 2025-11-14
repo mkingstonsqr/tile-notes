@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { Trash2, Edit3, Palette, GripVertical } from 'lucide-react'
+import { Trash2, Edit3, Palette, GripVertical, FileText, Mic, Image, Link, Calendar, Tag, Brain } from 'lucide-react'
 import { Note } from '../lib/supabase'
+import RichTextEditor from './RichTextEditor'
+import AIProcessor from './AIProcessor'
 
 interface NoteTileProps {
   note: Note
@@ -113,52 +115,112 @@ export default function NoteTile({ note, onUpdate, onDelete, isDragging }: NoteT
         </div>
       )}
 
+      {/* Note Type Icon */}
+      <div className="absolute top-2 left-8">
+        {note.note_type === 'text' && <FileText size={16} className="text-gray-500" />}
+        {note.note_type === 'voice' && <Mic size={16} className="text-blue-500" />}
+        {note.note_type === 'image' && <Image size={16} className="text-green-500" />}
+        {note.note_type === 'link' && <Link size={16} className="text-purple-500" />}
+      </div>
+
       {/* Content */}
       <div className="p-4 pt-8">
         {isEditing ? (
-          <div className="space-y-3">
-            <input
-              ref={titleRef}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-full font-semibold text-lg bg-transparent border-b border-gray-300 focus:border-blue-500 outline-none"
-              placeholder="Note title..."
-            />
-            <textarea
-              ref={contentRef}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-full bg-transparent resize-none outline-none min-h-[100px]"
-              placeholder="Start typing..."
-            />
-            <div className="flex space-x-2 pt-2">
-              <button
-                onClick={handleSave}
-                className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-3 py-1 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          <RichTextEditor
+            initialContent={content}
+            onSave={(newContent) => {
+              setContent(newContent)
+              onUpdate({ title, content: newContent })
+              setIsEditing(false)
+            }}
+            onCancel={handleCancel}
+            placeholder="Start writing your note..."
+          />
         ) : (
           <div 
             className="cursor-pointer"
             onClick={() => setIsEditing(true)}
           >
-            <h3 className="font-semibold text-lg mb-2 text-gray-800 line-clamp-2">
-              {note.title}
-            </h3>
-            <p className="text-gray-600 text-sm whitespace-pre-wrap line-clamp-6">
-              {note.content}
-            </p>
+            {/* Title */}
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold text-lg text-gray-800 line-clamp-2 flex-1">
+                {note.title || 'Untitled Note'}
+              </h3>
+            </div>
+
+            {/* Content Preview */}
+            <div className="text-gray-600 text-sm mb-3">
+              {note.note_type === 'image' && note.content.startsWith('data:image') ? (
+                <img 
+                  src={note.content} 
+                  alt="Note content" 
+                  className="w-full h-32 object-cover rounded-lg mb-2"
+                />
+              ) : note.note_type === 'voice' ? (
+                <div className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg">
+                  <Mic size={16} className="text-blue-500" />
+                  <span className="text-blue-700">Voice recording</span>
+                </div>
+              ) : note.note_type === 'link' ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-purple-600">
+                    <Link size={14} />
+                    <span className="text-xs">Link Note</span>
+                  </div>
+                  <p className="line-clamp-4">{note.content}</p>
+                </div>
+              ) : (
+                <p className="whitespace-pre-wrap line-clamp-6">{note.content}</p>
+              )}
+            </div>
+
+            {/* Metadata */}
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-1">
+                  <Calendar size={12} />
+                  <span>{new Date(note.created_at).toLocaleDateString()}</span>
+                </div>
+                {note.ai_tags && note.ai_tags.length > 0 && (
+                  <div className="flex items-center space-x-1">
+                    <Tag size={12} />
+                    <span>{note.ai_tags.slice(0, 2).join(', ')}</span>
+                  </div>
+                )}
+              </div>
+              {note.ai_summary && (
+                <div className="text-blue-500 text-xs">AI</div>
+              )}
+            </div>
+
+            {/* AI Tags */}
+            {note.ai_tags && note.ai_tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {note.ai_tags.slice(0, 3).map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-black/10 text-gray-700 text-xs rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+                {note.ai_tags.length > 3 && (
+                  <span className="text-xs text-gray-500">+{note.ai_tags.length - 3}</span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* AI Processing Component */}
+        {!isEditing && note.content.trim().length > 10 && (
+          <div className="mt-3">
+            <AIProcessor 
+              note={note} 
+              onProcessingComplete={(updatedNote) => {
+                onUpdate(updatedNote)
+              }}
+            />
           </div>
         )}
       </div>
