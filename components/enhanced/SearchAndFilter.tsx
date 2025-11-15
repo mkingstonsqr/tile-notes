@@ -125,7 +125,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
 
     // Completed tasks
     if (!filters.showCompletedTasks) {
-      filteredTasks = filteredTasks.filter(task => !task.completed);
+      filteredTasks = filteredTasks.filter(task => !task.is_completed);
     }
 
     onNotesFiltered(filteredNotes);
