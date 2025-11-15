@@ -29,7 +29,7 @@ export default function TileNotesApp() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark' | 'glassy'>('glassy');
+  const [theme, setTheme] = useState<'dark' | 'glassy'>('glassy');
 
   useEffect(() => {
     if (user) {
@@ -309,20 +309,22 @@ export default function TileNotesApp() {
     }
   };
 
-  const handleDateFilter = (date: Date) => {
+  const handleDateFilter = (date: Date | null) => {
     setSelectedDate(date);
     
     let filtered = notes;
     
-    // Filter by date
-    filtered = filtered.filter(note => {
-      const noteDate = new Date(note.created_at);
-      return (
-        noteDate.getDate() === date.getDate() &&
-        noteDate.getMonth() === date.getMonth() &&
-        noteDate.getFullYear() === date.getFullYear()
-      );
-    });
+    if (date) {
+      // Filter by date
+      filtered = filtered.filter(note => {
+        const noteDate = new Date(note.created_at);
+        return (
+          noteDate.getDate() === date.getDate() &&
+          noteDate.getMonth() === date.getMonth() &&
+          noteDate.getFullYear() === date.getFullYear()
+        );
+      });
+    }
     
     // Also apply tag filters if any
     if (selectedTags.length > 0) {

@@ -228,22 +228,42 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
             )}
           </div>
 
-          {/* Tags */}
+          {/* User Tags */}
           {note.tags && note.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
+            <div className="flex flex-wrap gap-2 mb-3">
               {note.tags.slice(0, 3).map((tag, index) => (
                 <motion.span
                   key={index}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.1 }}
-                  className="px-2 py-1 bg-white bg-opacity-20 text-white text-xs rounded-full font-medium"
+                  className="px-3 py-1.5 bg-white bg-opacity-20 text-white text-xs rounded-full font-medium"
                 >
                   #{tag}
                 </motion.span>
               ))}
               {note.tags.length > 3 && (
                 <span className="text-xs text-gray-300">+{note.tags.length - 3}</span>
+              )}
+            </div>
+          )}
+
+          {/* AI-Generated Tags */}
+          {note.ai_tags && note.ai_tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {note.ai_tags.slice(0, 4).map((tag, index) => (
+                <motion.span
+                  key={`ai-${index}`}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="px-3 py-1.5 bg-blue-500 bg-opacity-30 text-blue-200 text-xs rounded-full font-medium border border-blue-400 border-opacity-30"
+                >
+                  🤖 {tag}
+                </motion.span>
+              ))}
+              {note.ai_tags.length > 4 && (
+                <span className="text-xs text-blue-300">+{note.ai_tags.length - 4} AI</span>
               )}
             </div>
           )}

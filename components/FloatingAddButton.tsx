@@ -354,11 +354,12 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Content
                     </label>
-                    <div className="bg-white rounded-lg">
+                    <div className="bg-white rounded-lg" style={{ minHeight: '60vh' }}>
                       <RichTextEditor
                         value={noteContent}
                         onChange={setNoteContent}
                         placeholder="Start writing your note..."
+                        className="min-h-full"
                       />
                     </div>
                   </div>

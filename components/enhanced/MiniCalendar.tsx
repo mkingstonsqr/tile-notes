@@ -6,7 +6,7 @@ import { Note } from '../../lib/supabase';
 interface MiniCalendarProps {
   notes: Note[];
   selectedDate: Date | null;
-  onDateSelect: (date: Date) => void;
+  onDateSelect: (date: Date | null) => void;
 }
 
 const MiniCalendar: React.FC<MiniCalendarProps> = ({
@@ -90,7 +90,14 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({
           key={day}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          onClick={() => onDateSelect(date)}
+          onClick={() => {
+            if (isSelectedDay) {
+              // If clicking the same date, deselect it to show all notes
+              onDateSelect(null);
+            } else {
+              onDateSelect(date);
+            }
+          }}
           className={`
             h-8 w-8 rounded-lg text-sm font-medium transition-all duration-200 relative
             ${isSelectedDay

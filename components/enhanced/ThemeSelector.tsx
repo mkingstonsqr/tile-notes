@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Sparkles } from 'lucide-react';
+import { Moon, Sparkles } from 'lucide-react';
 
-type Theme = 'light' | 'dark' | 'glassy';
+type Theme = 'dark' | 'glassy';
 
 interface ThemeSelectorProps {
   onThemeChange: (theme: Theme) => void;
 }
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
-  const [currentTheme, setCurrentTheme] = useState<Theme>('light');
+  const [currentTheme, setCurrentTheme] = useState<Theme>('glassy');
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // Load saved theme from localStorage
     const savedTheme = localStorage.getItem('tilenotes-theme') as Theme;
-    if (savedTheme && ['light', 'dark', 'glassy'].includes(savedTheme)) {
+    if (savedTheme && ['dark', 'glassy'].includes(savedTheme)) {
       setCurrentTheme(savedTheme);
       applyTheme(savedTheme);
     } else {
-      // Default to system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const defaultTheme = prefersDark ? 'dark' : 'light';
-      setCurrentTheme(defaultTheme);
-      applyTheme(defaultTheme);
+      // Default to glassy
+      setCurrentTheme('glassy');
+      applyTheme('glassy');
     }
   }, []);
 
@@ -75,13 +73,6 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
   };
 
   const themes = [
-    {
-      key: 'light' as Theme,
-      name: 'Light',
-      icon: Sun,
-      description: 'Clean and bright',
-      preview: 'bg-white border-gray-200',
-    },
     {
       key: 'dark' as Theme,
       name: 'Dark',

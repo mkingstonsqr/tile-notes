@@ -168,12 +168,12 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       {/* Search Bar */}
       <div className="p-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white" />
           <input
             type="text"
             value={filters.searchQuery}
             onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-            className="w-full pl-10 pr-12 py-3 bg-white bg-opacity-50 border border-white border-opacity-30 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
+            className="w-full pl-10 pr-12 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-200 text-white"
             placeholder="Search notes and tasks..."
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
@@ -182,7 +182,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={clearFilters}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-white hover:text-gray-200"
               >
                 <X className="h-4 w-4" />
               </motion.button>
@@ -192,7 +192,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsExpanded(!isExpanded)}
               className={`p-1 rounded-lg transition-colors ${
-                isExpanded ? 'text-blue-600 bg-blue-100' : 'text-gray-400 hover:text-gray-600'
+                isExpanded ? 'text-blue-400 bg-blue-500 bg-opacity-20' : 'text-white hover:text-gray-200'
               }`}
             >
               <Filter className="h-5 w-5" />
