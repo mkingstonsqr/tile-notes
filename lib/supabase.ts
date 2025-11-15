@@ -43,7 +43,8 @@ export interface Task {
   note_id?: string
   title: string
   description?: string
-  completed: boolean
+  is_completed: boolean
+  completed_at?: string
   due_date?: string
   reminder_time?: string
   priority: 'low' | 'medium' | 'high'

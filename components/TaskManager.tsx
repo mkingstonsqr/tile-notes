@@ -54,7 +54,7 @@ export default function TaskManager({ noteId }: TaskManagerProps) {
         note_id: noteId,
         title: newTaskTitle.trim(),
         is_completed: false,
-        priority: 1
+        priority: 'medium' as 'low' | 'medium' | 'high'
       }
 
       const { data, error } = await supabase
