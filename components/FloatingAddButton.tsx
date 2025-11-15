@@ -155,13 +155,25 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
         noteData.content = `${noteContent}\n\nURL: ${linkUrl}`;
       }
 
-      console.log('Creating note with data:', noteData);
+      console.log('FloatingAddButton: Creating note with data:', noteData);
+      console.log('FloatingAddButton: onCreateNote function:', onCreateNote);
+      
+      // Test if the function exists
+      if (typeof onCreateNote !== 'function') {
+        throw new Error('onCreateNote is not a function');
+      }
+      
       const result = await onCreateNote(noteData);
-      console.log('Note creation result:', result);
+      console.log('FloatingAddButton: Note creation result:', result);
+      
+      if (!result) {
+        throw new Error('Note creation returned no result');
+      }
+      
       closeModal();
     } catch (error) {
-      console.error('Error creating note:', error);
-      alert('Failed to create note. Please try again.');
+      console.error('FloatingAddButton: Error creating note:', error);
+      alert(`Failed to create note: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsCreating(false);
     }

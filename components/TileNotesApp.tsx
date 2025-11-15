@@ -385,6 +385,23 @@ export default function TileNotesApp() {
                     onClick={async () => {
                       try {
                         console.log('Creating first note...');
+                        console.log('User:', user);
+                        console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+                        console.log('Supabase client:', supabase);
+                        
+                        // Test database connection first
+                        const { data: testData, error: testError } = await supabase
+                          .from('notes')
+                          .select('count')
+                          .eq('user_id', user?.id)
+                          .limit(1);
+                        
+                        console.log('Database test result:', { testData, testError });
+                        
+                        if (testError) {
+                          throw new Error(`Database connection failed: ${testError.message}`);
+                        }
+                        
                         const result = await createNote({ 
                           title: 'My First Note',
                           content: 'Start writing your thoughts here...',
@@ -393,7 +410,7 @@ export default function TileNotesApp() {
                         console.log('Note created successfully:', result);
                       } catch (error) {
                         console.error('Failed to create first note:', error);
-                        alert('Failed to create note. Please try again.');
+                        alert(`Failed to create note: ${error instanceof Error ? error.message : 'Unknown error'}`);
                       }
                     }}
                     className="btn-primary"
