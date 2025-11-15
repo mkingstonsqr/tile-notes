@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Paperclip, Tag, Bookmark } from 'lucide-react';
 import { Note } from '../../lib/supabase';
-import RichTextEditor from '../RichTextEditor';
+// import RichTextEditor from '../RichTextEditor';
 
 interface NoteEditModalProps {
   note: Note | null;
@@ -232,10 +232,11 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                     Content
                   </label>
                   <div className="border border-gray-300 rounded-xl overflow-hidden">
-                    <RichTextEditor
-                      content={editedNote.content || ''}
-                      onChange={(content) => setEditedNote({ ...editedNote, content })}
+                    <textarea
+                      value={editedNote.content || ''}
+                      onChange={(e) => setEditedNote({ ...editedNote, content: e.target.value })}
                       placeholder="Write your note content here..."
+                      className="w-full min-h-[200px] p-4 border-0 resize-none focus:outline-none"
                     />
                   </div>
                 </div>
