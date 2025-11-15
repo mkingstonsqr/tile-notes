@@ -7,12 +7,12 @@ import {
   List, 
   ListOrdered, 
   Link2, 
-  Type,
-  Palette,
   CheckSquare,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 interface RichTextEditorProps {
@@ -29,16 +29,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   className = ""
 }) => {
   const [isPreview, setIsPreview] = useState(false);
-  const [selectedColor, setSelectedColor] = useState('#000000');
-  const [selectedSize, setSelectedSize] = useState('16');
+  const [selectedColor, setSelectedColor] = useState('#3B3B3B');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const colors = [
-    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', 
-    '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000'
+    { color: '#3B3B3B', name: 'Dark Gray' },
+    { color: '#FF5757', name: 'Red' }
   ];
-
-  const fontSizes = ['12', '14', '16', '18', '20', '24', '28', '32'];
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -74,10 +71,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const insertColoredText = () => {
     insertFormatting(`<span style="color: ${selectedColor}">`, '</span>');
-  };
-
-  const insertSizedText = () => {
-    insertFormatting(`<span style="font-size: ${selectedSize}px">`, '</span>');
   };
 
   const insertCheckbox = () => {
@@ -137,17 +130,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const renderPreview = (text: string) => {
     return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
-      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-2">$1</h1>')
-      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold mb-2">$1</h2>')
-      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-bold mb-2">$1</h3>')
-      .replace(/^• (.*$)/gm, '<li class="ml-4">• $1</li>')
-      .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 list-decimal">$1</li>')
-      .replace(/☐ (.*$)/gm, '<label class="flex items-center space-x-2"><input type="checkbox" class="rounded"> <span>$1</span></label>')
-      .replace(/☑ (.*$)/gm, '<label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded"> <span class="line-through text-gray-500">$1</span></label>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 underline hover:text-blue-800" target="_blank">$1</a>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong style="font-family: Roboto, sans-serif;">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em style="font-family: Roboto, sans-serif;">$1</em>')
+      .replace(/<u>(.*?)<\/u>/g, '<u style="font-family: Roboto, sans-serif;">$1</u>')
+      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-2" style="font-family: Roboto, sans-serif;">$1</h1>')
+      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold mb-2" style="font-family: Roboto, sans-serif;">$1</h2>')
+      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-bold mb-2" style="font-family: Roboto, sans-serif;">$1</h3>')
+      .replace(/^• (.*$)/gm, '<li class="ml-4" style="font-family: Roboto, sans-serif;">• $1</li>')
+      .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 list-decimal" style="font-family: Roboto, sans-serif;">$1</li>')
+      .replace(/☐ (.*$)/gm, '<label class="flex items-center space-x-2"><input type="checkbox" class="rounded"> <span style="font-family: Roboto, sans-serif;">$1</span></label>')
+      .replace(/☑ (.*$)/gm, '<label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded"> <span class="line-through text-gray-500" style="font-family: Roboto, sans-serif;">$1</span></label>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 underline hover:text-blue-800" target="_blank" style="font-family: Roboto, sans-serif;">$1</a>')
       .replace(/\n/g, '<br>');
   };
 
@@ -192,19 +185,19 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-300 overflow-hidden ${className}`}>
+    <div className={`bg-white bg-opacity-90 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden shadow-lg ${className}`}>
       {/* Toolbar */}
-      <div className="border-b border-gray-200 p-3 bg-gray-50">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="border-b border-gray-200 p-4 bg-white bg-opacity-50 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Format Buttons */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-2">
             {formatButtons.map(({ icon: Icon, label, action, shortcut }) => (
               <motion.button
                 key={label}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={action}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
+                className="p-2.5 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-gray-700 hover:text-gray-900 border border-gray-200"
                 title={`${label} (${shortcut})`}
               >
                 <Icon size={16} />
@@ -212,17 +205,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             ))}
           </div>
 
-          <div className="w-px h-6 bg-gray-300" />
+          <div className="w-px h-8 bg-gray-300 opacity-50" />
 
           {/* Alignment Buttons */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-2">
             {alignButtons.map(({ icon: Icon, label, action }) => (
               <motion.button
                 key={label}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={action}
-                className="p-2 hover:bg-gray-200 rounded transition-colors"
+                className="p-2.5 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full shadow-md hover:shadow-lg transition-all duration-200 text-gray-700 hover:text-gray-900 border border-gray-200"
                 title={label}
               >
                 <Icon size={16} />
@@ -230,73 +223,60 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             ))}
           </div>
 
-          <div className="w-px h-6 bg-gray-300" />
+          <div className="w-px h-8 bg-gray-300 opacity-50" />
 
           {/* Color Picker */}
           <div className="flex items-center space-x-2">
-            <Palette size={16} className="text-gray-600" />
-            <div className="flex space-x-1">
-              {colors.map((color) => (
+            <span className="text-sm font-medium text-gray-600">Color:</span>
+            <div className="flex space-x-2">
+              {colors.map(({ color, name }) => (
                 <motion.button
                   key={color}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => {
                     setSelectedColor(color);
                     insertColoredText();
                   }}
-                  className={`w-6 h-6 rounded border-2 transition-all ${
-                    selectedColor === color ? 'border-gray-800 scale-110' : 'border-gray-300'
+                  className={`w-8 h-8 rounded-full shadow-md hover:shadow-lg transition-all duration-200 border-2 ${
+                    selectedColor === color 
+                      ? 'border-gray-800 ring-2 ring-gray-300' 
+                      : 'border-white hover:border-gray-300'
                   }`}
                   style={{ backgroundColor: color }}
-                  title={`Text color: ${color}`}
+                  title={`Text color: ${name}`}
                 />
               ))}
             </div>
           </div>
 
-          <div className="w-px h-6 bg-gray-300" />
-
-          {/* Font Size */}
-          <div className="flex items-center space-x-2">
-            <Type size={16} className="text-gray-600" />
-            <select
-              value={selectedSize}
-              onChange={(e) => {
-                setSelectedSize(e.target.value);
-                insertSizedText();
-              }}
-              className="text-sm border border-gray-300 rounded px-2 py-1"
-            >
-              {fontSizes.map(size => (
-                <option key={size} value={size}>{size}px</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="w-px h-6 bg-gray-300" />
+          <div className="w-px h-8 bg-gray-300 opacity-50" />
 
           {/* Preview Toggle */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsPreview(!isPreview)}
-            className={`px-3 py-1 text-sm rounded transition-colors ${
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 border ${
               isPreview 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-blue-600 text-white border-blue-600 shadow-blue-200' 
+                : 'bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-700 hover:text-gray-900 border-gray-200'
             }`}
           >
-            {isPreview ? 'Edit' : 'Preview'}
+            {isPreview ? <EyeOff size={16} /> : <Eye size={16} />}
+            <span className="text-sm font-medium">
+              {isPreview ? 'Edit' : 'Preview'}
+            </span>
           </motion.button>
         </div>
       </div>
 
       {/* Editor/Preview Area */}
-      <div className="min-h-[200px]">
+      <div className="min-h-[200px] bg-white bg-opacity-90 backdrop-blur-sm">
         {isPreview ? (
           <div 
-            className="p-4 prose prose-sm max-w-none min-h-[200px] overflow-auto"
+            className="p-6 prose prose-sm max-w-none min-h-[200px] overflow-auto"
+            style={{ fontFamily: 'Roboto, sans-serif' }}
             dangerouslySetInnerHTML={{ __html: renderPreview(value) }}
           />
         ) : (
@@ -306,20 +286,31 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="w-full min-h-[200px] p-4 resize-none outline-none text-gray-800 placeholder-gray-400 border-0"
-            style={{ minHeight: '200px' }}
+            className="w-full min-h-[200px] p-6 resize-none outline-none text-gray-800 placeholder-gray-400 border-0 bg-transparent"
+            style={{ 
+              minHeight: '200px',
+              fontFamily: 'Roboto, sans-serif',
+              fontSize: '16px',
+              lineHeight: '1.6'
+            }}
           />
         )}
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 px-4 py-2 bg-gray-50 text-xs text-gray-500">
+      <div className="border-t border-gray-200 px-6 py-3 bg-white bg-opacity-50 backdrop-blur-sm text-xs text-gray-500">
         <div className="flex justify-between items-center">
           <div className="space-y-1">
-            <div>**Bold** • *Italic* • <u>Underline</u> • • Bullets • 1. Numbers • ☐ Checkboxes</div>
-            <div>Shortcuts: Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline), Ctrl+K (Link)</div>
+            <div style={{ fontFamily: 'Roboto, sans-serif' }}>
+              <strong>**Bold**</strong> • <em>*Italic*</em> • <u>Underline</u> • • Bullets • 1. Numbers • ☐ Checkboxes
+            </div>
+            <div style={{ fontFamily: 'Roboto, sans-serif' }}>
+              Shortcuts: Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline), Ctrl+K (Link)
+            </div>
           </div>
-          <span>{value.length} characters</span>
+          <span style={{ fontFamily: 'Roboto, sans-serif' }}>
+            {value.length} characters
+          </span>
         </div>
       </div>
     </div>

@@ -384,11 +384,13 @@ export default function TileNotesApp() {
                     whileTap={{ scale: 0.95 }}
                     onClick={async () => {
                       try {
-                        await createNote({ 
+                        console.log('Creating first note...');
+                        const result = await createNote({ 
                           title: 'My First Note',
                           content: 'Start writing your thoughts here...',
                           note_type: 'text'
                         });
+                        console.log('Note created successfully:', result);
                       } catch (error) {
                         console.error('Failed to create first note:', error);
                         alert('Failed to create note. Please try again.');

@@ -155,10 +155,13 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
         noteData.content = `${noteContent}\n\nURL: ${linkUrl}`;
       }
 
-      await onCreateNote(noteData);
+      console.log('Creating note with data:', noteData);
+      const result = await onCreateNote(noteData);
+      console.log('Note creation result:', result);
       closeModal();
     } catch (error) {
       console.error('Error creating note:', error);
+      alert('Failed to create note. Please try again.');
     } finally {
       setIsCreating(false);
     }

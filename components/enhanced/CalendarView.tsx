@@ -115,6 +115,20 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     }
   };
 
+  const getWeekDays = (date: Date) => {
+    const startOfWeek = new Date(date);
+    const day = startOfWeek.getDay();
+    startOfWeek.setDate(date.getDate() - day);
+    
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const currentDay = new Date(startOfWeek);
+      currentDay.setDate(startOfWeek.getDate() + i);
+      days.push(currentDay);
+    }
+    return days;
+  };
+
   const renderMonthView = () => {
     const days = getDaysInMonth(currentDate);
 
@@ -166,6 +180,135 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             </motion.div>
           );
         })}
+      </div>
+    );
+  };
+
+  const renderWeekView = () => {
+    const weekDays = getWeekDays(currentDate);
+
+    return (
+      <div className="grid grid-cols-7 gap-2">
+        {weekDays.map((date, index) => {
+          const dayNotes = getNotesForDate(date);
+          return (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`
+                relative p-4 h-32 rounded-xl cursor-pointer transition-all duration-200 border
+                ${isToday(date) ? 'bg-blue-500 bg-opacity-80 text-white font-bold border-blue-400' : 'hover:bg-white hover:bg-opacity-20 border-gray-300'}
+                ${isSelected(date) ? 'ring-2 ring-blue-400 bg-blue-100 bg-opacity-20' : ''}
+              `}
+              onClick={() => handleDateClick(date)}
+            >
+              <div className="text-center mb-2">
+                <div className="text-xs font-medium opacity-75">
+                  {weekDays[index].toLocaleDateString('en-US', { weekday: 'short' })}
+                </div>
+                <div className="text-lg font-bold">
+                  {date.getDate()}
+                </div>
+              </div>
+              {dayNotes.length > 0 && (
+                <div className="space-y-1">
+                  {dayNotes.slice(0, 2).map((note, i) => (
+                    <div
+                      key={i}
+                      className="text-xs p-1 bg-blue-100 bg-opacity-80 rounded truncate"
+                    >
+                      {note.title || 'Untitled'}
+                    </div>
+                  ))}
+                  {dayNotes.length > 2 && (
+                    <div className="text-xs text-blue-400 font-bold text-center">
+                      +{dayNotes.length - 2} more
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderDayView = () => {
+    const dayNotes = getNotesForDate(currentDate);
+
+    return (
+      <div className="space-y-4">
+        <div className="text-center p-6 border-b border-gray-200">
+          <h3 className="text-2xl font-bold text-gray-800">
+            {currentDate.toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </h3>
+          <p className="text-gray-600 mt-2">
+            {dayNotes.length} {dayNotes.length === 1 ? 'note' : 'notes'} for this day
+          </p>
+        </div>
+        
+        {dayNotes.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <div className="text-6xl mb-4">📝</div>
+            <p className="text-lg">No notes for this day</p>
+            <p className="text-sm opacity-75">Create a note to get started</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {dayNotes.map((note) => (
+              <motion.div
+                key={note.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="glass-card p-4 rounded-xl cursor-pointer transition-all duration-300 hover:shadow-xl"
+                onClick={() => onNoteEdit(note)}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-medium text-gray-800 truncate flex-1">
+                    {note.title || 'Untitled'}
+                  </h4>
+                  {note.pinned && (
+                    <div className="text-yellow-500 ml-2">📌</div>
+                  )}
+                </div>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-3">
+                  {note.content}
+                </p>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>
+                    {new Date(note.created_at).toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                  {note.tags && note.tags.length > 0 && (
+                    <div className="flex space-x-1">
+                      {note.tags.slice(0, 2).map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {note.tags.length > 2 && (
+                        <span className="text-gray-400">+{note.tags.length - 2}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -297,7 +440,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
       {/* Calendar Grid */}
       <div className="mb-8">
-        {renderMonthView()}
+        {viewMode === 'month' && renderMonthView()}
+        {viewMode === 'week' && renderWeekView()}
+        {viewMode === 'day' && renderDayView()}
       </div>
 
       {/* Selected Date Notes */}

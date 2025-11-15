@@ -74,7 +74,8 @@ const TaskManager: React.FC<TaskManagerProps> = ({
     if (!newTask.title.trim()) return;
 
     try {
-      await onTaskCreate({
+      console.log('Creating task with data:', newTask);
+      const result = await onTaskCreate({
         title: newTask.title,
         description: newTask.description,
         due_date: newTask.due_date || null,
@@ -82,6 +83,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
         reminder_time: newTask.reminder_time || null,
         is_completed: false,
       });
+      console.log('Task creation result:', result);
 
       setNewTask({
         title: '',
