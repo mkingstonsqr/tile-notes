@@ -297,7 +297,10 @@ export default function TileNotesApp() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <SettingsPanel />
+            <SettingsPanel 
+              isOpen={true}
+              onClose={() => setCurrentView('notes')}
+            />
           </motion.div>
         );
       default:
