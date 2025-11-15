@@ -5,9 +5,9 @@ import { Task } from '../../lib/supabase';
 
 interface TaskManagerProps {
   tasks: Task[];
-  onTaskCreate: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => void;
-  onTaskUpdate: (taskId: string, updates: Partial<Task>) => void;
-  onTaskDelete: (taskId: string) => void;
+  onTaskCreate: (task: Partial<Task>) => Promise<Task | undefined>;
+  onTaskUpdate: (taskId: string, updates: Partial<Task>) => Promise<Task | undefined>;
+  onTaskDelete: (taskId: string) => Promise<void>;
 }
 
 interface NewTaskForm {
@@ -70,27 +70,31 @@ const TaskManager: React.FC<TaskManagerProps> = ({
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
-  const handleCreateTask = () => {
+  const handleCreateTask = async () => {
     if (!newTask.title.trim()) return;
 
-    onTaskCreate({
-      title: newTask.title,
-      description: newTask.description,
-      due_date: newTask.due_date || null,
-      priority: newTask.priority,
-      reminder_time: newTask.reminder_time || null,
-      is_completed: false,
-      user_id: '', // Will be set by the parent component
-    });
+    try {
+      await onTaskCreate({
+        title: newTask.title,
+        description: newTask.description,
+        due_date: newTask.due_date || null,
+        priority: newTask.priority,
+        reminder_time: newTask.reminder_time || null,
+        is_completed: false,
+      });
 
-    setNewTask({
-      title: '',
-      description: '',
-      due_date: '',
-      priority: 'medium',
-      reminder_time: '',
-    });
-    setShowNewTaskModal(false);
+      setNewTask({
+        title: '',
+        description: '',
+        due_date: '',
+        priority: 'medium',
+        reminder_time: '',
+      });
+      setShowNewTaskModal(false);
+    } catch (error) {
+      console.error('Failed to create task:', error);
+      alert('Failed to create task. Please try again.');
+    }
   };
 
   const handleTaskToggle = (taskId: string, completed: boolean) => {

@@ -10,6 +10,7 @@ import {
   Upload
 } from 'lucide-react';
 import type { Note } from '../lib/supabase';
+import RichTextEditor from './enhanced/RichTextEditor';
 
 interface FloatingAddButtonProps {
   onCreateNote: (noteData: Partial<Note>) => Promise<Note | undefined>;
@@ -302,13 +303,13 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Content
                     </label>
-                    <textarea
-                      value={noteContent}
-                      onChange={(e) => setNoteContent(e.target.value)}
-                      placeholder="Start writing your note..."
-                      rows={6}
-                      className="w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-white placeholder-gray-300"
-                    />
+                    <div className="bg-white rounded-lg">
+                      <RichTextEditor
+                        value={noteContent}
+                        onChange={setNoteContent}
+                        placeholder="Start writing your note..."
+                      />
+                    </div>
                   </div>
                 )}
 

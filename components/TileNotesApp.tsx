@@ -107,7 +107,16 @@ export default function TileNotesApp() {
       setNotes(prev => {
         const pinnedNotes = prev.filter(note => note.pinned);
         const unpinnedNotes = prev.filter(note => !note.pinned);
-        return data.pinned ? [data, ...pinnedNotes, ...unpinnedNotes] : [...pinnedNotes, data, ...unpinnedNotes];
+        const newNotes = data.pinned ? [data, ...pinnedNotes, ...unpinnedNotes] : [...pinnedNotes, data, ...unpinnedNotes];
+        return newNotes;
+      });
+      
+      // Update filtered notes as well
+      setFilteredNotes(prev => {
+        const pinnedNotes = prev.filter(note => note.pinned);
+        const unpinnedNotes = prev.filter(note => !note.pinned);
+        const newNotes = data.pinned ? [data, ...pinnedNotes, ...unpinnedNotes] : [...pinnedNotes, data, ...unpinnedNotes];
+        return newNotes;
       });
       
       return data;
@@ -227,14 +236,57 @@ export default function TileNotesApp() {
 
   const handleTagFilter = (tags: string[]) => {
     setSelectedTags(tags);
-    if (tags.length === 0) {
+    if (tags.length === 0 && !selectedDate) {
       setFilteredNotes(notes);
     } else {
-      const filtered = notes.filter(note =>
-        tags.some(tag => note.tags?.includes(tag))
-      );
+      let filtered = notes;
+      
+      // Filter by tags
+      if (tags.length > 0) {
+        filtered = filtered.filter(note =>
+          tags.some(tag => note.tags?.includes(tag))
+        );
+      }
+      
+      // Filter by date if selected
+      if (selectedDate) {
+        filtered = filtered.filter(note => {
+          const noteDate = new Date(note.created_at);
+          return (
+            noteDate.getDate() === selectedDate.getDate() &&
+            noteDate.getMonth() === selectedDate.getMonth() &&
+            noteDate.getFullYear() === selectedDate.getFullYear()
+          );
+        });
+      }
+      
       setFilteredNotes(filtered);
     }
+  };
+
+  const handleDateFilter = (date: Date) => {
+    setSelectedDate(date);
+    
+    let filtered = notes;
+    
+    // Filter by date
+    filtered = filtered.filter(note => {
+      const noteDate = new Date(note.created_at);
+      return (
+        noteDate.getDate() === date.getDate() &&
+        noteDate.getMonth() === date.getMonth() &&
+        noteDate.getFullYear() === date.getFullYear()
+      );
+    });
+    
+    // Also apply tag filters if any
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(note =>
+        selectedTags.some(tag => note.tags?.includes(tag))
+      );
+    }
+    
+    setFilteredNotes(filtered);
   };
 
   const handleDateSelect = (date: Date) => {
@@ -330,11 +382,18 @@ export default function TileNotesApp() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => createNote({ 
-                      title: 'My First Note',
-                      content: 'Start writing your thoughts here...',
-                      note_type: 'text'
-                    })}
+                    onClick={async () => {
+                      try {
+                        await createNote({ 
+                          title: 'My First Note',
+                          content: 'Start writing your thoughts here...',
+                          note_type: 'text'
+                        });
+                      } catch (error) {
+                        console.error('Failed to create first note:', error);
+                        alert('Failed to create note. Please try again.');
+                      }
+                    }}
                     className="btn-primary"
                   >
                     Create Your First Note
@@ -355,6 +414,7 @@ export default function TileNotesApp() {
                 selectedTags={selectedTags}
                 onTagSelect={handleTagFilter}
                 notes={notes}
+                onDateSelect={handleDateFilter}
               />
             </div>
           </motion.div>

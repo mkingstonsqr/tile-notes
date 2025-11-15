@@ -2,23 +2,27 @@ import { useState, useEffect } from 'react'
 import { Tag, Hash, X, Plus, Search, TrendingUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Note } from '../../lib/supabase'
+import MiniCalendar from './MiniCalendar'
 
 interface TagSidebarProps {
   tags: string[]
   selectedTags: string[]
   onTagSelect: (tags: string[]) => void
   notes: Note[]
+  onDateSelect?: (date: Date) => void
 }
 
 export default function TagSidebar({ 
   tags,
   notes, 
   selectedTags, 
-  onTagSelect
+  onTagSelect,
+  onDateSelect
 }: TagSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddTag, setShowAddTag] = useState(false)
   const [newTag, setNewTag] = useState('')
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date | null>(null)
 
   // Extract and count all tags from notes
   const tagCounts = notes.reduce((acc, note) => {
@@ -226,6 +230,18 @@ export default function TagSidebar({
               <p className="text-xs">Create some notes to see tags here</p>
             </div>
           )}
+        </div>
+
+        {/* Mini Calendar */}
+        <div className="mt-6">
+          <MiniCalendar
+            notes={notes}
+            selectedDate={selectedCalendarDate}
+            onDateSelect={(date) => {
+              setSelectedCalendarDate(date);
+              onDateSelect?.(date);
+            }}
+          />
         </div>
       </div>
 
