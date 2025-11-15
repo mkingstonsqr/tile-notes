@@ -1,19 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  TrashIcon, 
-  PencilIcon, 
-  SwatchIcon, 
-  Bars3Icon,
-  DocumentTextIcon,
-  MicrophoneIcon,
-  PhotoIcon,
-  LinkIcon,
-  CalendarIcon,
-  TagIcon,
-  BookmarkIcon
-} from '@heroicons/react/24/outline';
-import { BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/24/solid';
+  Trash2, 
+  Edit3, 
+  Palette, 
+  GripVertical,
+  FileText,
+  Mic,
+  Image,
+  Link,
+  Calendar,
+  Tag,
+  Bookmark
+} from 'lucide-react';
 import { Note } from '../lib/supabase';
 import RichTextEditor from './RichTextEditor';
 
@@ -74,13 +73,13 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
   const getNoteTypeIcon = () => {
     switch (note.note_type) {
       case 'voice':
-        return <MicrophoneIcon className="h-4 w-4 text-blue-500" />;
+        return <Mic className="h-4 w-4 text-blue-500" />;
       case 'image':
-        return <PhotoIcon className="h-4 w-4 text-green-500" />;
+        return <Image className="h-4 w-4 text-green-500" />;
       case 'link':
-        return <LinkIcon className="h-4 w-4 text-purple-500" />;
+        return <Link className="h-4 w-4 text-purple-500" />;
       default:
-        return <DocumentTextIcon className="h-4 w-4 text-gray-500" />;
+        return <FileText className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -105,7 +104,7 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
           animate={{ opacity: showActions ? 1 : 0 }}
           className="absolute top-2 left-2"
         >
-          <Bars3Icon className="h-4 w-4 text-gray-400" />
+          <GripVertical className="h-4 w-4 text-gray-400" />
         </motion.div>
 
         {/* Note Type Icon */}
@@ -124,11 +123,7 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
               : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-100 hover:bg-opacity-30'
           }`}
         >
-          {note.pinned ? (
-            <BookmarkSolidIcon className="h-4 w-4" />
-          ) : (
-            <BookmarkIcon className="h-4 w-4" />
-          )}
+          <Bookmark className={`h-4 w-4 ${note.pinned ? 'fill-current' : ''}`} />
         </motion.button>
 
         {/* Action Buttons */}
@@ -146,7 +141,7 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
                 onClick={() => setShowColorPicker(!showColorPicker)}
                 className="p-1 text-gray-400 hover:text-gray-600 hover:bg-white hover:bg-opacity-30 rounded-lg transition-colors"
               >
-                <SwatchIcon className="h-4 w-4" />
+                <Palette className="h-4 w-4" />
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -154,7 +149,7 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
                 onClick={onEdit}
                 className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-100 hover:bg-opacity-30 rounded-lg transition-colors"
               >
-                <PencilIcon className="h-4 w-4" />
+                <Edit3 className="h-4 w-4" />
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -162,7 +157,7 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
                 onClick={onDelete}
                 className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-100 hover:bg-opacity-30 rounded-lg transition-colors"
               >
-                <TrashIcon className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </motion.button>
             </motion.div>
           )}
@@ -217,13 +212,13 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
               />
             ) : note.note_type === 'voice' ? (
               <div className="flex items-center space-x-2 p-3 bg-blue-500 bg-opacity-20 rounded-lg">
-                <MicrophoneIcon className="h-4 w-4 text-blue-400" />
+                <Mic className="h-4 w-4 text-blue-400" />
                 <span className="text-blue-300">Voice recording</span>
               </div>
             ) : note.note_type === 'link' ? (
               <div className="space-y-2">
                 <div className="flex items-center space-x-2 text-purple-400">
-                  <LinkIcon className="h-3 w-3" />
+                  <Link className="h-3 w-3" />
                   <span className="text-xs">Link Note</span>
                 </div>
                 <p className="line-clamp-4">{note.content}</p>
@@ -257,12 +252,12 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
           <div className="flex items-center justify-between text-xs text-gray-400">
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-1">
-                <CalendarIcon className="h-3 w-3" />
+                <Calendar className="h-3 w-3" />
                 <span>{new Date(note.created_at).toLocaleDateString()}</span>
               </div>
               {note.tags && note.tags.length > 0 && (
                 <div className="flex items-center space-x-1">
-                  <TagIcon className="h-3 w-3" />
+                  <Tag className="h-3 w-3" />
                   <span>{note.tags.length} tags</span>
                 </div>
               )}

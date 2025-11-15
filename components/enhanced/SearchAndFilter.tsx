@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MagnifyingGlassIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Search, Filter, X } from 'lucide-react';
 import { Note, Task } from '../../lib/supabase';
 
 interface SearchAndFilterProps {
@@ -168,7 +168,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
       {/* Search Bar */}
       <div className="p-4">
         <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
             value={filters.searchQuery}
@@ -184,7 +184,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 onClick={clearFilters}
                 className="text-gray-400 hover:text-gray-600"
               >
-                <XMarkIcon className="h-4 w-4" />
+                <X className="h-4 w-4" />
               </motion.button>
             )}
             <motion.button
@@ -195,7 +195,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 isExpanded ? 'text-blue-600 bg-blue-100' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
-              <FunnelIcon className="h-5 w-5" />
+              <Filter className="h-5 w-5" />
             </motion.button>
           </div>
         </div>
