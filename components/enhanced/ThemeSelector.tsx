@@ -36,14 +36,6 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
     
     // Update CSS custom properties
     switch (theme) {
-      case 'light':
-        root.style.setProperty('--bg-primary', '#ffffff');
-        root.style.setProperty('--bg-secondary', '#f8fafc');
-        root.style.setProperty('--text-primary', '#1f2937');
-        root.style.setProperty('--text-secondary', '#6b7280');
-        root.style.setProperty('--glass-bg', 'rgba(255, 255, 255, 0.8)');
-        root.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.3)');
-        break;
       case 'dark':
         root.style.setProperty('--bg-primary', '#111827');
         root.style.setProperty('--bg-secondary', '#1f2937');
