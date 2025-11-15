@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon, PaperClipIcon, TagIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { X, Paperclip, Tag, Bookmark } from 'lucide-react';
 import { Note } from '../../lib/supabase';
 import RichTextEditor from '../RichTextEditor';
 
@@ -108,7 +108,7 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                       : 'text-gray-400 hover:text-yellow-600'
                   }`}
                 >
-                  <BookmarkIcon className="h-5 w-5" />
+                  <Bookmark className="h-5 w-5" />
                 </motion.button>
                 <h2 className="text-xl font-bold text-gray-800">Edit Note</h2>
               </div>
@@ -128,7 +128,7 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                   onClick={onClose}
                   className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
                 >
-                  <XMarkIcon className="h-6 w-6" />
+                  <X className="h-6 w-6" />
                 </motion.button>
               </div>
             </div>
@@ -166,7 +166,7 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                           exit={{ scale: 0 }}
                           className="inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
                         >
-                          <TagIcon className="h-3 w-3 mr-1" />
+                          <Tag className="h-3 w-3 mr-1" />
                           {tag}
                           <motion.button
                             whileHover={{ scale: 1.2 }}

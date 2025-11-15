@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusIcon, CalendarIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { Plus, Calendar, Clock, AlertTriangle } from 'lucide-react';
 import { Task } from '../../lib/supabase';
 
 interface TaskManagerProps {
@@ -133,7 +133,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
             onClick={() => setShowNewTaskModal(true)}
             className="btn-primary flex items-center space-x-2"
           >
-            <PlusIcon className="h-5 w-5" />
+            <Plus className="h-5 w-5" />
             <span>New Task</span>
           </motion.button>
         </div>
@@ -229,7 +229,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                       {task.title}
                     </h3>
                     {isOverdue(task) && (
-                      <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
                     )}
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
                       {task.priority}
@@ -245,7 +245,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                   <div className="flex items-center space-x-4 text-xs text-gray-500">
                     {task.due_date && (
                       <div className="flex items-center space-x-1">
-                        <CalendarIcon className="h-3 w-3" />
+                        <Calendar className="h-3 w-3" />
                         <span className={isOverdue(task) ? 'text-red-600 font-medium' : ''}>
                           {new Date(task.due_date).toLocaleDateString()}
                         </span>
@@ -253,7 +253,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                     )}
                     {task.reminder_time && (
                       <div className="flex items-center space-x-1">
-                        <ClockIcon className="h-3 w-3" />
+                        <Clock className="h-3 w-3" />
                         <span>{new Date(task.reminder_time).toLocaleTimeString()}</span>
                       </div>
                     )}

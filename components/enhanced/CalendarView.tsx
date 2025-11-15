@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Note } from '../../lib/supabase';
 
 interface CalendarViewProps {
@@ -260,7 +260,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               onClick={() => navigateMonth('prev')}
               className="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
             >
-              <ChevronLeftIcon className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5" />
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -268,7 +268,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               onClick={() => navigateMonth('next')}
               className="p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
             >
-              <ChevronRightIcon className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5" />
             </motion.button>
           </div>
         </div>

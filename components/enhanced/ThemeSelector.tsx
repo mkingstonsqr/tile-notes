@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SunIcon, MoonIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { Sun, Moon, Sparkles } from 'lucide-react';
 
 type Theme = 'light' | 'dark' | 'glassy';
 
@@ -78,21 +78,21 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
     {
       key: 'light' as Theme,
       name: 'Light',
-      icon: SunIcon,
+      icon: Sun,
       description: 'Clean and bright',
       preview: 'bg-white border-gray-200',
     },
     {
       key: 'dark' as Theme,
       name: 'Dark',
-      icon: MoonIcon,
+      icon: Moon,
       description: 'Easy on the eyes',
       preview: 'bg-gray-900 border-gray-700',
     },
     {
       key: 'glassy' as Theme,
       name: 'Glassy',
-      icon: SparklesIcon,
+      icon: Sparkles,
       description: 'Translucent beauty',
       preview: 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-white/30',
     },
@@ -178,7 +178,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
               {/* Theme Effects Note */}
               <div className="mt-4 p-3 bg-blue-50 bg-opacity-50 rounded-xl">
                 <p className="text-xs text-blue-800">
-                  <SparklesIcon className="h-3 w-3 inline mr-1" />
+                  <Sparkles className="h-3 w-3 inline mr-1" />
                   Themes affect the entire app appearance and are saved automatically.
                 </p>
               </div>
