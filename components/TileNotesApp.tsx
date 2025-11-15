@@ -171,7 +171,7 @@ export default function TileNotesApp() {
         due_date: taskData.due_date || null,
         priority: taskData.priority || 'medium',
         reminder_time: taskData.reminder_time || null,
-        completed: false
+        is_completed: false
       };
 
       const { data, error } = await supabase
