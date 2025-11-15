@@ -9,7 +9,7 @@ interface TagSidebarProps {
   selectedTags: string[]
   onTagSelect: (tags: string[]) => void
   notes: Note[]
-  onDateSelect?: (date: Date) => void
+  onDateSelect?: (date: Date | null) => void
 }
 
 export default function TagSidebar({ 
