@@ -35,16 +35,16 @@ const TaskManager: React.FC<TaskManagerProps> = ({
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed' | 'overdue'>('all');
 
   const isOverdue = (task: Task) => {
-    if (!task.due_date || task.completed) return false;
+    if (!task.due_date || task.is_completed) return false;
     return new Date(task.due_date) < new Date();
   };
 
   const filteredTasks = tasks.filter(task => {
     switch (filter) {
       case 'pending':
-        return !task.completed;
+        return !task.is_completed;
       case 'completed':
-        return task.completed;
+        return task.is_completed;
       case 'overdue':
         return isOverdue(task);
       default:
@@ -79,7 +79,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
       due_date: newTask.due_date || null,
       priority: newTask.priority,
       reminder_time: newTask.reminder_time || null,
-      completed: false,
+      is_completed: false,
       user_id: '', // Will be set by the parent component
     });
 
@@ -94,7 +94,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
   };
 
   const handleTaskToggle = (taskId: string, completed: boolean) => {
-    onTaskUpdate(taskId, { completed });
+    onTaskUpdate(taskId, { is_completed: completed });
   };
 
   const getPriorityColor = (priority: string) => {
@@ -112,7 +112,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
 
   const getTaskStats = () => {
     const total = tasks.length;
-    const completed = tasks.filter(t => t.completed).length;
+    const completed = tasks.filter(t => t.is_completed).length;
     const overdue = tasks.filter(t => isOverdue(t)).length;
     const pending = total - completed;
 
@@ -197,7 +197,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
               whileHover={{ scale: 1.01 }}
               className={`
                 glass-card p-4 rounded-xl transition-all duration-300
-                ${task.completed ? 'opacity-60' : ''}
+                ${task.is_completed ? 'opacity-60' : ''}
                 ${isOverdue(task) ? 'bg-red-50 border-red-200' : ''}
               `}
             >
@@ -206,16 +206,16 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => handleTaskToggle(task.id, !task.completed)}
+                  onClick={() => handleTaskToggle(task.id, !task.is_completed)}
                   className={`
                     mt-1 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200
-                    ${task.completed
+                    ${task.is_completed
                       ? 'bg-green-500 border-green-500 text-white'
                       : 'border-gray-300 hover:border-green-400'
                     }
                   `}
                 >
-                  {task.completed && (
+                  {task.is_completed && (
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
@@ -225,7 +225,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                 {/* Task Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-1">
-                    <h3 className={`font-medium ${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                    <h3 className={`font-medium ${task.is_completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
                       {task.title}
                     </h3>
                     {isOverdue(task) && (
@@ -237,7 +237,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                   </div>
 
                   {task.description && (
-                    <p className={`text-sm mb-2 ${task.completed ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className={`text-sm mb-2 ${task.is_completed ? 'text-gray-400' : 'text-gray-600'}`}>
                       {task.description}
                     </p>
                   )}
