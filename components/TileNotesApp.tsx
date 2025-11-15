@@ -439,11 +439,15 @@ export default function TileNotesApp() {
         availableTags={allTags}
       />
 
-      {/* AI Processor */}
-      <AIProcessor
-        notes={notes}
-        onNotesUpdate={setNotes}
-      />
+      {/* AI Processor - Hidden for now */}
+      {/* <AIProcessor
+        note={editingNote || notes[0]}
+        onProcessingComplete={(updatedNote) => {
+          setNotes(prev => prev.map(note => 
+            note.id === updatedNote.id ? updatedNote : note
+          ))
+        }}
+      /> */}
     </div>
   );
 }
