@@ -4,19 +4,17 @@ import { motion, AnimatePresence } from 'framer-motion'
 import type { Note } from '../../lib/supabase'
 
 interface TagSidebarProps {
-  notes: Note[]
+  tags: string[]
   selectedTags: string[]
-  onTagSelect: (tag: string) => void
-  onTagDeselect: (tag: string) => void
-  onClearTags: () => void
+  onTagSelect: (tags: string[]) => void
+  notes: Note[]
 }
 
 export default function TagSidebar({ 
+  tags,
   notes, 
   selectedTags, 
-  onTagSelect, 
-  onTagDeselect, 
-  onClearTags 
+  onTagSelect
 }: TagSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddTag, setShowAddTag] = useState(false)
@@ -44,18 +42,22 @@ export default function TagSidebar({
 
   const handleTagClick = (tag: string) => {
     if (selectedTags.includes(tag)) {
-      onTagDeselect(tag)
+      onTagSelect(selectedTags.filter(t => t !== tag))
     } else {
-      onTagSelect(tag)
+      onTagSelect([...selectedTags, tag])
     }
   }
 
   const addCustomTag = () => {
     if (newTag.trim()) {
-      onTagSelect(newTag.trim())
+      onTagSelect([...selectedTags, newTag.trim()])
       setNewTag('')
       setShowAddTag(false)
     }
+  }
+
+  const handleClearTags = () => {
+    onTagSelect([])
   }
 
   return (
@@ -69,7 +71,7 @@ export default function TagSidebar({
           </div>
           {selectedTags.length > 0 && (
             <button
-              onClick={onClearTags}
+              onClick={handleClearTags}
               className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
             >
               Clear all
@@ -107,7 +109,7 @@ export default function TagSidebar({
                   <Hash size={12} />
                   <span>{tag}</span>
                   <button
-                    onClick={() => onTagDeselect(tag)}
+                    onClick={() => handleTagClick(tag)}
                     className="ml-1 hover:bg-white hover:bg-opacity-20 rounded-full p-0.5"
                   >
                     <X size={10} />
