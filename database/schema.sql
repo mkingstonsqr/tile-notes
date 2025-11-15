@@ -28,6 +28,12 @@ CREATE TABLE notes (
   ai_tags TEXT[], -- Array of AI-generated tags
   ai_processed_at TIMESTAMP WITH TIME ZONE,
   
+  -- User-defined tags (array of strings)
+  tags TEXT[] DEFAULT '{}',
+  
+  -- Note organization
+  pinned BOOLEAN DEFAULT FALSE,
+  
   -- Metadata
   color TEXT DEFAULT '#FFFACD',
   position_x INTEGER DEFAULT 0,
@@ -50,13 +56,11 @@ CREATE TABLE tasks (
   is_completed BOOLEAN DEFAULT FALSE,
   
   -- Scheduling
-  due_date TIMESTAMP WITH TIME ZONE,
-  reminder_date TIMESTAMP WITH TIME ZONE,
-  is_recurring BOOLEAN DEFAULT FALSE,
-  recurrence_pattern TEXT, -- 'daily', 'weekly', 'monthly', etc.
+  due_date TEXT, -- Store as string for flexibility
+  reminder_time TEXT, -- Store as string for flexibility
   
   -- Metadata
-  priority INTEGER DEFAULT 0, -- 0=none, 1=low, 2=medium, 3=high
+  priority TEXT CHECK (priority IN ('low', 'medium', 'high')) DEFAULT 'medium',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   completed_at TIMESTAMP WITH TIME ZONE
