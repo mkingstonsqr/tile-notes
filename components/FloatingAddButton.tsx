@@ -139,10 +139,17 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
   };
 
   const handleCreateNote = async () => {
-    if (!modalType) return;
+    console.log('🚀 FloatingAddButton: handleCreateNote started');
+    console.log('🔍 FloatingAddButton: modalType:', modalType);
+    
+    if (!modalType) {
+      console.error('❌ FloatingAddButton: No modalType set');
+      return;
+    }
 
     setIsCreating(true);
     try {
+      console.log('🔍 FloatingAddButton: Building noteData object...');
       const noteData: Partial<Note> = {
         title: noteTitle || `New ${modalType} note`,
         content: noteContent || `New ${modalType} note content`,
@@ -153,28 +160,57 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
 
       if (modalType === 'link' && linkUrl) {
         noteData.content = `${noteContent}\n\nURL: ${linkUrl}`;
+        console.log('🔍 FloatingAddButton: Added link URL to content');
       }
 
-      console.log('FloatingAddButton: Creating note with data:', noteData);
-      console.log('FloatingAddButton: onCreateNote function:', onCreateNote);
+      console.log('🔍 FloatingAddButton: Final noteData:', JSON.stringify(noteData, null, 2));
+      console.log('🔍 FloatingAddButton: onCreateNote function type:', typeof onCreateNote);
+      console.log('🔍 FloatingAddButton: onCreateNote function:', onCreateNote);
       
       // Test if the function exists
       if (typeof onCreateNote !== 'function') {
-        throw new Error('onCreateNote is not a function');
+        const error = new Error(`onCreateNote is not a function (type: ${typeof onCreateNote})`);
+        console.error('❌ FloatingAddButton: Function validation failed:', error);
+        throw error;
       }
       
+      console.log('🔍 FloatingAddButton: Calling onCreateNote function...');
       const result = await onCreateNote(noteData);
-      console.log('FloatingAddButton: Note creation result:', result);
+      console.log('🔍 FloatingAddButton: onCreateNote returned:', result);
+      console.log('🔍 FloatingAddButton: Result type:', typeof result);
       
       if (!result) {
-        throw new Error('Note creation returned no result');
+        const error = new Error('Note creation returned no result (null/undefined)');
+        console.error('❌ FloatingAddButton: No result returned:', error);
+        throw error;
       }
       
+      console.log('✅ FloatingAddButton: Note created successfully, closing modal');
       closeModal();
     } catch (error) {
-      console.error('FloatingAddButton: Error creating note:', error);
-      alert(`Failed to create note: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('❌ FloatingAddButton: Caught error in handleCreateNote:', error);
+      console.error('❌ FloatingAddButton: Error type:', typeof error);
+      console.error('❌ FloatingAddButton: Error constructor:', error?.constructor?.name);
+      
+      if (error instanceof Error) {
+        console.error('❌ FloatingAddButton: Error message:', error.message);
+        console.error('❌ FloatingAddButton: Error stack:', error.stack);
+      }
+      
+      // Create detailed error message
+      let errorMessage = 'Unknown error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else {
+        errorMessage = `Unexpected error type: ${typeof error}`;
+      }
+      
+      console.error('❌ FloatingAddButton: Final error message:', errorMessage);
+      alert(`Failed to create note: ${errorMessage}`);
     } finally {
+      console.log('🔍 FloatingAddButton: Setting isCreating to false');
       setIsCreating(false);
     }
   };

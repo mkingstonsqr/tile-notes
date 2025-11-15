@@ -4,8 +4,26 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
+// Debug logging for environment variables
+console.log('🔍 Supabase Configuration:');
+console.log('🔍 NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'MISSING');
+console.log('🔍 NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'MISSING');
+console.log('🔍 URL length:', supabaseUrl?.length || 0);
+console.log('🔍 Key length:', supabaseAnonKey?.length || 0);
+
+if (!supabaseUrl) {
+  console.error('❌ NEXT_PUBLIC_SUPABASE_URL is missing!');
+}
+if (!supabaseAnonKey) {
+  console.error('❌ NEXT_PUBLIC_SUPABASE_ANON_KEY is missing!');
+}
+
 // Client-side Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Test the client creation
+console.log('🔍 Supabase client created:', !!supabase);
+console.log('🔍 Supabase client methods:', Object.keys(supabase));
 
 // Database types
 export interface Profile {

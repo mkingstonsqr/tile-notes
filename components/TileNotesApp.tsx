@@ -79,9 +79,19 @@ export default function TileNotesApp() {
   };
 
   const createNote = async (noteData: Partial<Note>) => {
-    if (!user) return;
+    console.log('🔍 createNote: Starting note creation process');
+    console.log('🔍 createNote: Input noteData:', JSON.stringify(noteData, null, 2));
+    console.log('🔍 createNote: User object:', user);
+    console.log('🔍 createNote: User ID:', user?.id);
+    
+    if (!user) {
+      const error = new Error('No authenticated user found');
+      console.error('❌ createNote: No user authenticated');
+      throw error;
+    }
 
     try {
+      console.log('🔍 createNote: Building newNote object...');
       const newNote: Partial<Note> = {
         user_id: user.id,
         title: noteData.title || '',
@@ -94,6 +104,10 @@ export default function TileNotesApp() {
         position_y: noteData.position_y || 0,
         is_archived: false
       };
+      
+      console.log('🔍 createNote: Final newNote object:', JSON.stringify(newNote, null, 2));
+      console.log('🔍 createNote: Supabase client:', supabase);
+      console.log('🔍 createNote: About to call supabase.from("notes").insert()...');
 
       const { data, error } = await supabase
         .from('notes')
@@ -101,13 +115,32 @@ export default function TileNotesApp() {
         .select()
         .single();
 
-      if (error) throw error;
+      console.log('🔍 createNote: Supabase response - data:', data);
+      console.log('🔍 createNote: Supabase response - error:', error);
+      
+      if (error) {
+        console.error('❌ createNote: Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw new Error(`Database error: ${error.message} (Code: ${error.code})`);
+      }
+      
+      if (!data) {
+        console.error('❌ createNote: No data returned from Supabase');
+        throw new Error('No data returned from database insert');
+      }
+      
+      console.log('✅ createNote: Note created successfully, updating state...');
       
       // Insert at the beginning, but after pinned notes
       setNotes(prev => {
         const pinnedNotes = prev.filter(note => note.pinned);
         const unpinnedNotes = prev.filter(note => !note.pinned);
         const newNotes = data.pinned ? [data, ...pinnedNotes, ...unpinnedNotes] : [...pinnedNotes, data, ...unpinnedNotes];
+        console.log('🔍 createNote: Updated notes array length:', newNotes.length);
         return newNotes;
       });
       
@@ -119,10 +152,22 @@ export default function TileNotesApp() {
         return newNotes;
       });
       
+      console.log('✅ createNote: Process completed successfully');
       return data;
     } catch (error) {
-      console.error('Error creating note:', error);
-      throw error;
+      console.error('❌ createNote: Caught error:', error);
+      console.error('❌ createNote: Error type:', typeof error);
+      console.error('❌ createNote: Error constructor:', error?.constructor?.name);
+      
+      if (error instanceof Error) {
+        console.error('❌ createNote: Error message:', error.message);
+        console.error('❌ createNote: Error stack:', error.stack);
+      }
+      
+      // Re-throw with more context
+      const enhancedError = new Error(`Note creation failed: ${error instanceof Error ? error.message : String(error)}`);
+      enhancedError.cause = error;
+      throw enhancedError;
     }
   };
 
