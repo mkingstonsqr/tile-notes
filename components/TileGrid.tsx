@@ -80,18 +80,13 @@ export default function TileGrid({ notes, onUpdateNote, onDeleteNote, onNoteEdit
                   {sectionNotes.map((note, index) => (
                     <Draggable key={note.id} draggableId={note.id} index={index}>
                       {(provided, snapshot) => (
-                        <motion.div
+                        <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          transition={{ duration: 0.2 }}
                           className={`transform transition-all duration-200 ${
                             snapshot.isDragging ? 'rotate-3 scale-105 shadow-2xl z-50' : ''
                           }`}
-                          whileHover={{ y: -5 }}
                         >
                           <NoteTile
                             note={note}
@@ -100,7 +95,7 @@ export default function TileGrid({ notes, onUpdateNote, onDeleteNote, onNoteEdit
                             onEdit={() => onNoteEdit(note)}
                             isDragging={snapshot.isDragging}
                           />
-                        </motion.div>
+                        </div>
                       )}
                     </Draggable>
                   ))}
