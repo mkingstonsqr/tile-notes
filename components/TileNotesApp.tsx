@@ -14,6 +14,7 @@ import NoteEditModal from './enhanced/NoteEditModal';
 import ThemeSelector from './enhanced/ThemeSelector';
 import SettingsPanel from './SettingsPanel';
 import AIProcessor from './AIProcessor';
+import { processNoteWithAI, transcribeAudio, generateImageDescription } from '../lib/openai';
 
 type View = 'notes' | 'calendar' | 'tasks' | 'settings';
 
@@ -152,6 +153,14 @@ export default function TileNotesApp() {
         return newNotes;
       });
       
+      // Trigger AI processing in the background for new notes
+      if (data.content && data.content.trim().length > 10) {
+        console.log('🤖 createNote: Triggering AI analysis for new note...');
+        setTimeout(() => {
+          processNoteInBackground(data);
+        }, 2000); // Start processing after 2 seconds
+      }
+      
       console.log('✅ createNote: Process completed successfully');
       return data;
     } catch (error) {
@@ -273,6 +282,108 @@ export default function TileNotesApp() {
     } catch (error) {
       console.error('Error deleting task:', error);
       throw error;
+    }
+  };
+
+  // Background AI processing function
+  const processNoteInBackground = async (note: Note) => {
+    if (!user) return;
+
+    try {
+      console.log('🤖 Starting background AI processing for note:', note.id);
+      
+      let aiResults: any = {};
+
+      // Process different note types
+      if (note.note_type === 'voice') {
+        // For voice notes, we would transcribe first, then process
+        // In a real implementation, you'd pass the actual audio blob
+        console.log('🎤 Processing voice note...');
+        aiResults.transcription = "Voice transcription would go here (requires audio file)";
+        aiResults = await processNoteWithAI(note.content, note.note_type);
+      } else if (note.note_type === 'image' && note.content.startsWith('data:image')) {
+        // For image notes, generate description first
+        console.log('🖼️ Processing image note...');
+        try {
+          const description = await generateImageDescription(note.content);
+          aiResults = await processNoteWithAI(description, 'image');
+          aiResults.summary = description;
+        } catch (error) {
+          console.error('Image processing error:', error);
+          aiResults = await processNoteWithAI('Image content', note.note_type);
+        }
+      } else {
+        // For text and link notes, process content directly
+        console.log('📝 Processing text/link note...');
+        aiResults = await processNoteWithAI(note.content, note.note_type);
+      }
+
+      console.log('🤖 AI processing results:', aiResults);
+
+      // Update note in database with AI results
+      const updates: Partial<Note> = {
+        ai_tags: aiResults.tags || [],
+        ai_summary: aiResults.summary || null,
+        ai_processed_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('notes')
+        .update(updates)
+        .eq('id', note.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setNotes(prev => prev.map(n => 
+        n.id === note.id 
+          ? { ...n, ...updates }
+          : n
+      ));
+
+      setFilteredNotes(prev => prev.map(n => 
+        n.id === note.id 
+          ? { ...n, ...updates }
+          : n
+      ));
+
+      // Create tasks if extracted
+      if (aiResults.tasks && aiResults.tasks.length > 0) {
+        console.log('✅ Creating tasks from AI analysis:', aiResults.tasks);
+        const taskInserts = aiResults.tasks.map((taskTitle: string) => ({
+          user_id: user.id,
+          note_id: note.id,
+          title: taskTitle,
+          is_completed: false,
+          priority: 'medium'
+        }));
+
+        const { error: taskError } = await supabase
+          .from('tasks')
+          .insert(taskInserts);
+
+        if (taskError) {
+          console.error('Error creating tasks:', taskError);
+        } else {
+          // Reload tasks to show new ones
+          loadTasks();
+        }
+      }
+
+      console.log('✅ Background AI processing completed for note:', note.id);
+
+    } catch (error) {
+      console.error('❌ Background AI processing failed:', error);
+      
+      // Still mark as processed to avoid infinite retries
+      const { error: updateError } = await supabase
+        .from('notes')
+        .update({ ai_processed_at: new Date().toISOString() })
+        .eq('id', note.id);
+
+      if (updateError) {
+        console.error('Error marking note as processed:', updateError);
+      }
     }
   };
 
