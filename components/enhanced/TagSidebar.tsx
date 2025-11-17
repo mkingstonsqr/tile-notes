@@ -70,13 +70,13 @@ export default function TagSidebar({
       <div className="p-6 border-b border-white border-opacity-20">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <Tag size={20} className="text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-800">Tags</h2>
+            <Tag size={20} className="text-white" />
+            <h2 className="text-lg font-semibold text-white">Tags</h2>
           </div>
           {selectedTags.length > 0 && (
             <button
               onClick={handleClearTags}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-sm text-gray-200 hover:text-white transition-colors"
             >
               Clear all
             </button>
@@ -99,7 +99,7 @@ export default function TagSidebar({
       {/* Selected Tags */}
       {selectedTags.length > 0 && (
         <div className="p-4 border-b border-white border-opacity-20">
-          <h3 className="text-sm font-medium text-gray-600 mb-3">Active Filters</h3>
+          <h3 className="text-sm font-medium text-white mb-3">Active Filters</h3>
           <div className="flex flex-wrap gap-2">
             <AnimatePresence>
               {selectedTags.map(tag => (
@@ -130,8 +130,8 @@ export default function TagSidebar({
         {/* Popular Tags */}
         <div>
           <div className="flex items-center space-x-2 mb-3">
-            <TrendingUp size={16} className="text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-600">Popular</h3>
+            <TrendingUp size={16} className="text-white" />
+            <h3 className="text-sm font-medium text-white">Popular</h3>
           </div>
           <div className="space-y-2">
             <AnimatePresence>
@@ -161,10 +161,10 @@ export default function TagSidebar({
         {/* All Tags */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-gray-600">All Tags</h3>
+            <h3 className="text-sm font-medium text-white">All Tags</h3>
             <button
               onClick={() => setShowAddTag(!showAddTag)}
-              className="text-xs text-gray-500 hover:text-gray-700 flex items-center space-x-1"
+              className="text-xs text-gray-200 hover:text-white flex items-center space-x-1"
             >
               <Plus size={12} />
               <span>Add</span>
@@ -247,7 +247,7 @@ export default function TagSidebar({
 
       {/* Footer Stats */}
       <div className="p-4 border-t border-white border-opacity-20">
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center justify-between text-xs text-gray-200">
           <span>{Object.keys(tagCounts).length} total tags</span>
           <span>{notes.length} notes</span>
         </div>

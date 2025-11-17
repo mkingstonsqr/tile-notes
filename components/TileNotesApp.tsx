@@ -507,11 +507,23 @@ export default function TileNotesApp() {
   return (
     <div className={`min-h-screen transition-all duration-500 ${
       theme === 'glassy' 
-        ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900' 
+        ? 'bg-gradient-to-br from-slate-800 via-purple-800 to-indigo-800' 
         : theme === 'dark'
         ? 'bg-gray-900'
         : 'bg-gray-50'
     }`}>
+      {/* Background Effects - Lighter and more airy */}
+      {theme === 'glassy' && (
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -inset-10 opacity-15">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+            <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{animationDelay: '2s'}}></div>
+            <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{animationDelay: '4s'}}></div>
+            <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{animationDelay: '1s'}}></div>
+            <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{animationDelay: '3s'}}></div>
+          </div>
+        </div>
+      )}
       <Header
         user={user}
         onSignOut={handleSignOut}

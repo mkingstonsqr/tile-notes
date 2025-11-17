@@ -66,25 +66,34 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-purple-800 to-slate-800 flex items-center justify-center px-4">
+      {/* Background Effects */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -inset-10 opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-pulse" style={{animationDelay: '4s'}}></div>
+        </div>
+      </div>
+
+      <div className="max-w-md w-full space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-black mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             📝 TileNotes
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-200 text-lg">
             The future of note-taking
           </p>
         </div>
 
         {/* Auth Form */}
-        <div className="bg-white border-2 border-black rounded-none p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="glass-card p-8 rounded-2xl backdrop-blur-lg border border-white border-opacity-20">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-black">
+            <h2 className="text-2xl font-bold text-white">
               {mode === 'signin' ? 'Welcome Back' : 'Create Account'}
             </h2>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-200 mt-2">
               {mode === 'signin' 
                 ? 'Sign in to access your notes' 
                 : 'Join TileNotes and start organizing your thoughts'
@@ -120,7 +129,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
           <form onSubmit={handleEmailAuth} className="space-y-4">
             {mode === 'signup' && (
               <div>
-                <label className="block text-sm font-bold text-black mb-2">
+                <label className="block text-sm font-bold text-white mb-2">
                   Full Name
                 </label>
                 <div className="relative">
@@ -129,7 +138,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-black focus:outline-none focus:ring-0 text-black placeholder-gray-500"
+                    className="w-full pl-10 pr-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-300"
                     placeholder="Enter your full name"
                     required
                   />
@@ -138,7 +147,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
             )}
 
             <div>
-              <label className="block text-sm font-bold text-black mb-2">
+              <label className="block text-sm font-bold text-white mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -147,7 +156,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-black focus:outline-none focus:ring-0 text-black placeholder-gray-500"
+                  className="w-full pl-10 pr-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-300"
                   placeholder="Enter your email"
                   required
                 />
@@ -155,7 +164,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-black mb-2">
+              <label className="block text-sm font-bold text-white mb-2">
                 Password
               </label>
               <div className="relative">
@@ -164,7 +173,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 border-2 border-black focus:outline-none focus:ring-0 text-black placeholder-gray-500"
+                  className="w-full pl-10 pr-12 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-300"
                   placeholder="Enter your password"
                   required
                   minLength={6}
@@ -172,7 +181,7 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -190,11 +199,11 @@ export default function AuthForm({ mode, onToggleMode }: AuthFormProps) {
 
           {/* Toggle Mode */}
           <div className="text-center mt-6">
-            <p className="text-gray-600">
+            <p className="text-gray-200">
               {mode === 'signin' ? "Don't have an account?" : "Already have an account?"}
               <button
                 onClick={onToggleMode}
-                className="ml-2 text-black font-bold hover:underline"
+                className="ml-2 text-white font-bold hover:underline"
               >
                 {mode === 'signin' ? 'Sign Up' : 'Sign In'}
               </button>

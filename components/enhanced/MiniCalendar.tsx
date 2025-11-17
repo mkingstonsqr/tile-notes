@@ -136,8 +136,8 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <Calendar size={16} className="text-gray-600" />
-          <h3 className="text-sm font-semibold text-gray-800">Calendar</h3>
+          <Calendar size={16} className="text-white" />
+          <h3 className="text-sm font-semibold text-white">Calendar</h3>
         </div>
         <div className="flex items-center space-x-1">
           <motion.button
@@ -161,7 +161,7 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({
 
       {/* Month/Year */}
       <div className="text-center mb-3">
-        <h4 className="text-sm font-medium text-gray-800">
+        <h4 className="text-sm font-medium text-white">
           {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
         </h4>
       </div>
@@ -169,7 +169,7 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({
       {/* Day Headers */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map(day => (
-          <div key={day} className="text-xs text-gray-500 text-center font-medium">
+          <div key={day} className="text-xs text-gray-200 text-center font-medium">
             {day.slice(0, 1)}
           </div>
         ))}
@@ -181,18 +181,18 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 pt-3 border-t border-gray-200 space-y-2">
+      <div className="mt-4 pt-3 border-t border-white border-opacity-20 space-y-2">
         <div className="flex items-center space-x-2 text-xs">
           <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-          <span className="text-gray-600">Selected</span>
+          <span className="text-gray-200">Selected</span>
         </div>
         <div className="flex items-center space-x-2 text-xs">
           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-gray-600">Has notes</span>
+          <span className="text-gray-200">Has notes</span>
         </div>
         <div className="flex items-center space-x-2 text-xs">
           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-          <span className="text-gray-600">Today</span>
+          <span className="text-gray-200">Today</span>
         </div>
       </div>
 
