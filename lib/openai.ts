@@ -23,12 +23,15 @@ export interface AIProcessingResult {
 
 export async function processNoteWithAI(content: string, noteType: string): Promise<AIProcessingResult> {
   console.log('🤖 processNoteWithAI called with:', { content: content.substring(0, 100), noteType });
+  console.log('🔍 Environment check - API Key:', process.env.NEXT_PUBLIC_OPENAI_API_KEY ? 'EXISTS' : 'MISSING');
+  console.log('🔍 Environment check - API Key length:', process.env.NEXT_PUBLIC_OPENAI_API_KEY?.length || 0);
   
   const openai = getOpenAIClient()
   
   if (!openai) {
     console.log('❌ OpenAI API key not found, using fallback processing');
     console.log('🔍 API Key exists:', !!process.env.NEXT_PUBLIC_OPENAI_API_KEY);
+    console.log('🔍 Full API Key (first 10 chars):', process.env.NEXT_PUBLIC_OPENAI_API_KEY?.substring(0, 10));
     return {
       tags: extractBasicTags(content),
       summary: content.length > 40 ? content.substring(0, 40) + '...' : content,
@@ -38,6 +41,7 @@ export async function processNoteWithAI(content: string, noteType: string): Prom
   }
   
   console.log('✅ OpenAI client available, starting AI processing...');
+  console.log('🔍 Making API call to OpenAI with content length:', content.length);
 
   try {
     const prompt = `
@@ -58,6 +62,7 @@ Respond in JSON format:
 }
 `
 
+    console.log('🔍 Sending request to OpenAI...');
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -74,10 +79,15 @@ Respond in JSON format:
       temperature: 0.3
     })
 
+    console.log('🔍 OpenAI response received:', response);
+    console.log('🔍 Response choices:', response.choices);
     const result = response.choices[0]?.message?.content
+    console.log('🔍 Raw result from OpenAI:', result);
+    
     if (!result) throw new Error('No response from OpenAI')
 
     const parsed = JSON.parse(result) as AIProcessingResult
+    console.log('🔍 Parsed AI result:', parsed);
     
     // Validate and clean the response
     return {
