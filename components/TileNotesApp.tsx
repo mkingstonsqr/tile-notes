@@ -30,7 +30,7 @@ export default function TileNotesApp() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState<'dark' | 'glassy'>('glassy');
+  const [theme, setTheme] = useState<'dark' | 'glassy' | 'afternoon'>('glassy');
 
   useEffect(() => {
     if (user) {
@@ -621,7 +621,7 @@ export default function TileNotesApp() {
         ? 'bg-gradient-to-br from-slate-800 via-purple-800 to-indigo-800' 
         : theme === 'dark'
         ? 'bg-gray-900'
-        : 'bg-gray-50'
+        : 'bg-gradient-to-br from-orange-50 via-white to-yellow-50'
     }`}>
       {/* Background Effects - Lighter and more airy */}
       {theme === 'glassy' && (
