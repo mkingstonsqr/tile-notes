@@ -22,17 +22,22 @@ export interface AIProcessingResult {
 }
 
 export async function processNoteWithAI(content: string, noteType: string): Promise<AIProcessingResult> {
+  console.log('🤖 processNoteWithAI called with:', { content: content.substring(0, 100), noteType });
+  
   const openai = getOpenAIClient()
   
   if (!openai) {
-    console.log('OpenAI API key not found, using fallback processing')
+    console.log('❌ OpenAI API key not found, using fallback processing');
+    console.log('🔍 API Key exists:', !!process.env.NEXT_PUBLIC_OPENAI_API_KEY);
     return {
       tags: extractBasicTags(content),
-      summary: content.length > 100 ? content.substring(0, 100) + '...' : undefined,
+      summary: content.length > 40 ? content.substring(0, 40) + '...' : content,
       tasks: extractBasicTasks(content),
       sentiment: 'neutral'
     }
   }
+  
+  console.log('✅ OpenAI client available, starting AI processing...');
 
   try {
     const prompt = `

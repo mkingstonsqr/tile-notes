@@ -285,8 +285,51 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
             </div>
           )}
 
+          {/* AI Analysis Section */}
+          {(note.ai_tags && note.ai_tags.length > 0) || note.ai_summary ? (
+            <div className="mt-4 p-3 bg-purple-500 bg-opacity-10 border border-purple-400 border-opacity-30 rounded-lg">
+              <div className="flex items-center space-x-1 mb-2">
+                <span className="text-purple-400 text-xs font-medium">🤖 AI Analysis</span>
+              </div>
+              
+              {/* AI Summary */}
+              {note.ai_summary && (
+                <p className="text-xs text-purple-200 mb-2 italic">
+                  "{note.ai_summary}"
+                </p>
+              )}
+              
+              {/* AI Tags */}
+              {note.ai_tags && note.ai_tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {note.ai_tags.slice(0, 4).map((tag, index) => (
+                    <span
+                      key={`ai-${index}`}
+                      className="px-2 py-1 bg-purple-500 bg-opacity-30 text-purple-200 text-xs rounded-full font-medium border border-purple-400 border-opacity-30"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {note.ai_tags.length > 4 && (
+                    <span className="text-xs text-purple-300">+{note.ai_tags.length - 4}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            // Show processing indicator for new notes
+            !note.ai_processed_at && note.content && note.content.trim().length > 10 && (
+              <div className="mt-4 p-3 bg-gray-500 bg-opacity-10 border border-gray-400 border-opacity-30 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-purple-400"></div>
+                  <span className="text-gray-400 text-xs">AI analyzing...</span>
+                </div>
+              </div>
+            )
+          )}
+
           {/* Metadata */}
-          <div className="flex items-center justify-between text-xs text-gray-400">
+          <div className="flex items-center justify-between text-xs text-gray-400 mt-3">
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-1">
                 <Calendar className="h-3 w-3" />
@@ -299,13 +342,13 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
                 </div>
               )}
             </div>
-            {note.ai_summary && (
+            {note.ai_processed_at && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-blue-400 text-xs font-medium bg-blue-500 bg-opacity-20 px-2 py-1 rounded-full"
+                className="text-purple-400 text-xs font-medium bg-purple-500 bg-opacity-20 px-2 py-1 rounded-full"
               >
-                AI
+                AI ✓
               </motion.div>
             )}
           </div>

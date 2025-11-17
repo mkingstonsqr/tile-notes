@@ -150,9 +150,29 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
     setIsCreating(true);
     try {
       console.log('🔍 FloatingAddButton: Building noteData object...');
+      let finalContent = noteContent || `New ${modalType} note content`;
+      
+      // Handle voice note transcription
+      if (modalType === 'voice' && recordedBlob) {
+        console.log('🎤 Processing voice note with transcription...');
+        try {
+          // Import transcription function
+          const { transcribeAudio } = await import('../lib/openai');
+          const transcription = await transcribeAudio(recordedBlob);
+          console.log('🎤 Transcription result:', transcription);
+          
+          // Set the transcribed text as the note content
+          finalContent = transcription;
+          console.log('✅ Voice note content set to transcription');
+        } catch (transcriptionError) {
+          console.error('❌ Voice transcription failed:', transcriptionError);
+          finalContent = 'Voice recording captured - transcription failed';
+        }
+      }
+
       const noteData: Partial<Note> = {
         title: noteTitle || `New ${modalType} note`,
-        content: noteContent || `New ${modalType} note content`,
+        content: finalContent,
         note_type: modalType,
         tags: [],
         pinned: false,
@@ -165,7 +185,6 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
 
       console.log('🔍 FloatingAddButton: Final noteData:', JSON.stringify(noteData, null, 2));
       console.log('🔍 FloatingAddButton: onCreateNote function type:', typeof onCreateNote);
-      console.log('🔍 FloatingAddButton: onCreateNote function:', onCreateNote);
       
       // Test if the function exists
       if (typeof onCreateNote !== 'function') {
