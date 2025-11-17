@@ -306,7 +306,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="glass-card rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden"
+              className="glass-card rounded-2xl max-w-4xl w-full h-[95vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -332,7 +332,7 @@ export default function FloatingAddButton({ onCreateNote }: FloatingAddButtonPro
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {/* Title Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
