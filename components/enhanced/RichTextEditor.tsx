@@ -145,6 +145,60 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    // Handle Enter key for continuing lists
+    if (e.key === 'Enter') {
+      const cursorPos = textarea.selectionStart;
+      const textBeforeCursor = value.substring(0, cursorPos);
+      const lines = textBeforeCursor.split('\n');
+      const currentLine = lines[lines.length - 1];
+
+      // Check for bullet points
+      if (currentLine.match(/^(\s*)• /)) {
+        e.preventDefault();
+        const indent = currentLine.match(/^(\s*)/)?.[1] || '';
+        const newText = value.substring(0, cursorPos) + '\n' + indent + '• ' + value.substring(cursorPos);
+        onChange(newText);
+        
+        setTimeout(() => {
+          textarea.setSelectionRange(cursorPos + indent.length + 3, cursorPos + indent.length + 3);
+        }, 0);
+        return;
+      }
+
+      // Check for numbered lists
+      const numberedMatch = currentLine.match(/^(\s*)(\d+)\. /);
+      if (numberedMatch) {
+        e.preventDefault();
+        const indent = numberedMatch[1] || '';
+        const nextNumber = parseInt(numberedMatch[2]) + 1;
+        const newText = value.substring(0, cursorPos) + '\n' + indent + nextNumber + '. ' + value.substring(cursorPos);
+        onChange(newText);
+        
+        setTimeout(() => {
+          const newPos = cursorPos + indent.length + nextNumber.toString().length + 3;
+          textarea.setSelectionRange(newPos, newPos);
+        }, 0);
+        return;
+      }
+
+      // Check for checkboxes
+      if (currentLine.match(/^(\s*)☐ /) || currentLine.match(/^(\s*)☑ /)) {
+        e.preventDefault();
+        const indent = currentLine.match(/^(\s*)/)?.[1] || '';
+        const newText = value.substring(0, cursorPos) + '\n' + indent + '☐ ' + value.substring(cursorPos);
+        onChange(newText);
+        
+        setTimeout(() => {
+          textarea.setSelectionRange(cursorPos + indent.length + 3, cursorPos + indent.length + 3);
+        }, 0);
+        return;
+      }
+    }
+
+    // Handle keyboard shortcuts
     if (e.ctrlKey || e.metaKey) {
       switch (e.key) {
         case 'b':

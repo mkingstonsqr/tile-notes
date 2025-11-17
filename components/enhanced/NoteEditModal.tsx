@@ -264,17 +264,68 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                   />
                 </div>
 
+                {/* AI Analysis Section */}
+                {(note.ai_tags && note.ai_tags.length > 0) || note.ai_summary ? (
+                  <div className="mt-6 p-4 bg-purple-500 bg-opacity-10 border border-purple-400 border-opacity-30 rounded-xl">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <span className="text-purple-400 text-sm font-semibold">🤖 AI Analysis</span>
+                      {note.ai_processed_at && (
+                        <span className="text-xs text-purple-300">
+                          Processed {new Date(note.ai_processed_at).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* AI Summary */}
+                    {note.ai_summary && (
+                      <div className="mb-3">
+                        <p className="text-xs text-purple-300 mb-1 font-medium">Summary:</p>
+                        <p className="text-sm text-purple-100 italic bg-purple-500 bg-opacity-10 p-2 rounded">
+                          "{note.ai_summary}"
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* AI Tags */}
+                    {note.ai_tags && note.ai_tags.length > 0 && (
+                      <div>
+                        <p className="text-xs text-purple-300 mb-2 font-medium">AI Generated Tags:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {note.ai_tags.map((tag, index) => (
+                            <span
+                              key={`ai-${index}`}
+                              className="px-3 py-1 bg-purple-500 bg-opacity-30 text-purple-200 text-sm rounded-full font-medium border border-purple-400 border-opacity-30"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Show processing indicator for new notes
+                  !note.ai_processed_at && note.content && note.content.trim().length > 10 && (
+                    <div className="mt-6 p-4 bg-gray-500 bg-opacity-10 border border-gray-400 border-opacity-30 rounded-xl">
+                      <div className="flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400"></div>
+                        <span className="text-gray-300 text-sm">AI analyzing note content...</span>
+                      </div>
+                    </div>
+                  )
+                )}
+
                 {/* Metadata */}
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white border-opacity-20 mt-6">
                   <div>
-                    <p className="text-sm text-gray-500">Created</p>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm text-gray-400">Created</p>
+                    <p className="text-sm font-medium text-white">
                       {new Date(note.created_at).toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Last Modified</p>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm text-gray-400">Last Modified</p>
+                    <p className="text-sm font-medium text-white">
                       {new Date(note.updated_at).toLocaleString()}
                     </p>
                   </div>
