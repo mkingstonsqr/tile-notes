@@ -62,6 +62,7 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
   };
 
   const handleColorChange = (color: string) => {
+    console.log('🎨 Changing note color to:', color);
     onUpdate({ color });
     setShowColorPicker(false);
   };
@@ -112,56 +113,72 @@ export default function NoteTile({ note, onUpdate, onDelete, onEdit, isDragging 
           {getNoteTypeIcon()}
         </div>
 
-        {/* Pin Button */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handlePinToggle}
-          className={`absolute top-2 right-12 p-1 rounded-lg transition-colors ${
-            note.pinned 
-              ? 'text-yellow-500 bg-yellow-100 bg-opacity-50' 
-              : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-100 hover:bg-opacity-30'
-          }`}
-        >
-          <Bookmark className={`h-4 w-4 ${note.pinned ? 'fill-current' : ''}`} />
-        </motion.button>
+        {/* Action Buttons - Always show pin, others on hover */}
+        <div className="absolute top-2 right-2 flex items-center space-x-2">
+          {/* Pin Button - Always visible */}
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handlePinToggle}
+            className={`p-1.5 rounded-lg transition-all duration-200 ${
+              note.pinned 
+                ? 'text-yellow-500 bg-yellow-100 bg-opacity-50 shadow-sm' 
+                : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-100 hover:bg-opacity-30'
+            }`}
+            title={note.pinned ? 'Unpin note' : 'Pin note'}
+          >
+            <Bookmark className={`h-4 w-4 ${note.pinned ? 'fill-current' : ''}`} />
+          </motion.button>
 
-        {/* Action Buttons */}
-        <AnimatePresence>
-          {showActions && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              className="absolute top-2 right-2 flex space-x-1"
-            >
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setShowColorPicker(!showColorPicker)}
-                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-white hover:bg-opacity-30 rounded-lg transition-colors"
+          {/* Other Action Buttons - Show on hover */}
+          <AnimatePresence>
+            {showActions && (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="flex items-center space-x-2"
               >
-                <Palette className="h-4 w-4" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onEdit}
-                className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-100 hover:bg-opacity-30 rounded-lg transition-colors"
-              >
-                <Edit3 className="h-4 w-4" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onDelete}
-                className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-100 hover:bg-opacity-30 rounded-lg transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowColorPicker(!showColorPicker);
+                  }}
+                  className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-100 hover:bg-opacity-30 rounded-lg transition-all duration-200"
+                  title="Change color"
+                >
+                  <Palette className="h-4 w-4" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit();
+                  }}
+                  className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-100 hover:bg-opacity-30 rounded-lg transition-all duration-200"
+                  title="Edit note"
+                >
+                  <Edit3 className="h-4 w-4" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                  }}
+                  className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-100 hover:bg-opacity-30 rounded-lg transition-all duration-200"
+                  title="Delete note"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Color Picker */}
         <AnimatePresence>
