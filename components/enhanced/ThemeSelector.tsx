@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Sparkles } from 'lucide-react';
+import { Moon, Sparkles, Sun } from 'lucide-react';
 
-type Theme = 'dark' | 'glassy';
+type Theme = 'dark' | 'glassy' | 'afternoon';
 
 interface ThemeSelectorProps {
   onThemeChange: (theme: Theme) => void;
@@ -15,7 +15,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
   useEffect(() => {
     // Load saved theme from localStorage
     const savedTheme = localStorage.getItem('tilenotes-theme') as Theme;
-    if (savedTheme && ['dark', 'glassy'].includes(savedTheme)) {
+    if (savedTheme && ['dark', 'glassy', 'afternoon'].includes(savedTheme)) {
       setCurrentTheme(savedTheme);
       applyTheme(savedTheme);
     } else {
@@ -29,7 +29,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
     const root = document.documentElement;
     
     // Remove existing theme classes
-    root.classList.remove('theme-light', 'theme-dark', 'theme-glassy');
+    root.classList.remove('theme-light', 'theme-dark', 'theme-glassy', 'theme-afternoon');
     
     // Apply new theme
     root.classList.add(`theme-${theme}`);
@@ -51,6 +51,14 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
         root.style.setProperty('--text-secondary', '#e5e7eb');
         root.style.setProperty('--glass-bg', 'rgba(255, 255, 255, 0.1)');
         root.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.2)');
+        break;
+      case 'afternoon':
+        root.style.setProperty('--bg-primary', '#fafbfc');
+        root.style.setProperty('--bg-secondary', '#ffffff');
+        root.style.setProperty('--text-primary', '#1d1d1f');
+        root.style.setProperty('--text-secondary', '#6e6e73');
+        root.style.setProperty('--glass-bg', 'rgba(255, 255, 255, 0.8)');
+        root.style.setProperty('--glass-border', 'rgba(0, 0, 0, 0.1)');
         break;
     }
     
@@ -78,6 +86,13 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ onThemeChange }) => {
       icon: Sparkles,
       description: 'Translucent beauty',
       preview: 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-white/30',
+    },
+    {
+      key: 'afternoon' as Theme,
+      name: 'Afternoon',
+      icon: Sun,
+      description: 'Clean & bright',
+      preview: 'bg-gradient-to-br from-orange-100 to-yellow-100 border-orange-200',
     },
   ];
 
