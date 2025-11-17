@@ -92,7 +92,7 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="glass-card w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl"
+            className="glass-card w-full max-w-4xl h-[95vh] overflow-hidden rounded-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -110,7 +110,7 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                 >
                   <Bookmark className="h-5 w-5" />
                 </motion.button>
-                <h2 className="text-xl font-bold text-gray-800">Edit Note</h2>
+                <h2 className="text-xl font-bold text-white">Edit Note</h2>
               </div>
               
               <div className="flex items-center space-x-2">
@@ -156,29 +156,54 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
                     Tags
                   </label>
                   <div className="space-y-3">
-                    {/* Existing Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {editedNote.tags?.map((tag, index) => (
-                        <motion.span
-                          key={index}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          exit={{ scale: 0 }}
-                          className="inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
-                        >
-                          <Tag className="h-3 w-3 mr-1" />
-                          {tag}
-                          <motion.button
-                            whileHover={{ scale: 1.2 }}
-                            whileTap={{ scale: 0.8 }}
-                            onClick={() => removeTag(tag)}
-                            className="ml-2 text-blue-600 hover:text-blue-800"
+                    {/* Manual Tags */}
+                    <div>
+                      <p className="text-xs text-gray-600 mb-2 font-medium">Your Tags:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {editedNote.tags?.map((tag, index) => (
+                          <motion.span
+                            key={index}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0 }}
+                            className="inline-flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
                           >
-                            ×
-                          </motion.button>
-                        </motion.span>
-                      ))}
+                            <Tag className="h-3 w-3 mr-1" />
+                            {tag}
+                            <motion.button
+                              whileHover={{ scale: 1.2 }}
+                              whileTap={{ scale: 0.8 }}
+                              onClick={() => removeTag(tag)}
+                              className="ml-2 text-blue-600 hover:text-blue-800"
+                            >
+                              ×
+                            </motion.button>
+                          </motion.span>
+                        ))}
+                        {(!editedNote.tags || editedNote.tags.length === 0) && (
+                          <p className="text-sm text-gray-500 italic">No manual tags yet</p>
+                        )}
+                      </div>
                     </div>
+
+                    {/* AI Generated Tags */}
+                    {note?.ai_tags && note.ai_tags.length > 0 && (
+                      <div>
+                        <p className="text-xs text-purple-600 mb-2 font-medium">🤖 AI Generated Tags:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {note.ai_tags.map((tag, index) => (
+                            <motion.span
+                              key={`ai-${index}`}
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="inline-flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium border border-purple-200"
+                            >
+                              🤖 {tag}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Add New Tag */}
                     <div className="flex space-x-2">
@@ -258,34 +283,23 @@ const NoteEditModal: React.FC<NoteEditModalProps> = ({
 
               {/* Footer */}
               <div className="p-6 bg-gray-50 bg-opacity-50 border-t border-white border-opacity-20">
-                <div className="flex items-center justify-between">
+                <div className="flex justify-end space-x-3">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="text-red-600 hover:text-red-800 font-medium transition-colors"
+                    onClick={onClose}
+                    className="btn-secondary"
                   >
-                    Delete Note
+                    Cancel
                   </motion.button>
-                  
-                  <div className="flex space-x-3">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={onClose}
-                      className="btn-secondary"
-                    >
-                      Cancel
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleSave}
-                      className="btn-primary"
-                    >
-                      Save Changes
-                    </motion.button>
-                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleSave}
+                    className="btn-primary"
+                  >
+                    Save Changes
+                  </motion.button>
                 </div>
               </div>
             </div>
